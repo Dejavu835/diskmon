@@ -1,0 +1,247 @@
+/* DiskMon 简体中文 (zh-Hans) 本地化 */
+/* 克制 — 不堆砌修饰;高级 — 简洁直接 */
+/* v0.4.0 polish-F:中文为默认语言 */
+
+/* MARK: - 通用 / UI 外壳 */
+"app.name" = "DiskMon";
+"ui.preferences" = "偏好设置…";
+"ui.quit" = "退出";
+"ui.close" = "关闭";
+"ui.cancel" = "取消";
+"ui.open" = "打开";
+"ui.copy" = "复制";
+"ui.later" = "稍后";
+"ui.refresh" = "刷新";
+"ui.settings" = "设置";
+
+/* MARK: - 中英混排 section / 卡片标签(v0.4.3 polish-I P2-1) */
+/* 8 个中英混排标签:大写英文 · 中文(中文降一档,克制不抢戏) */
+"card.temperature.label" = "TEMPERATURE · 温度";
+"card.capacity.label" = "CAPACITY · 容量";
+"card.power.label" = "POWER · 功耗";
+"card.smart.label" = "SMART · 详情";
+"card.overview.label" = "OVERVIEW · 总览";
+"card.health.label" = "HEALTH · 健康";
+"card.history.label" = "HISTORY · 历史";
+"section.drives" = "DRIVES · 磁盘";
+"section.charts" = "CHARTS · 图表";
+
+/* MARK: - Preferences 标签页 */
+"tab.general" = "通用";
+"tab.disks" = "磁盘";
+"tab.notifications" = "通知";
+"tab.appearance" = "外观";
+"tab.about" = "关于";
+
+/* MARK: - 详情视图标签页(polish-D 预留) */
+"tab.overview" = "总览";
+"tab.temperature" = "温度";
+"tab.capacity" = "容量";
+"tab.power" = "功耗";
+"tab.smart" = "SMART";
+"tab.detail" = "详情";
+"tab.history" = "历史";
+
+/* MARK: - 通用设置 */
+"settings.polling" = "轮询";
+"settings.interval" = "监控间隔";
+"settings.interval.value" = "%d 秒";
+"settings.thresholds" = "阈值";
+"settings.warning" = "警告温度";
+"settings.critical" = "严重温度";
+"settings.unit" = "温度单位";
+"settings.unit.celsius" = "摄氏度 (℃)";
+"settings.unit.fahrenheit" = "华氏度 (℉)";
+/* v0.4.0 polish-E:5 个 5 Preferences 子 View 用到但 1A+1B 漏加的 key */
+"monitor.interval.help" = "查询 smartctl 的频率(1-60 秒)";
+"warning.temperature.help" = "磁盘温度达到此值时显示黄色告警";
+"critical.temperature.help" = "磁盘温度达到此值时显示红色告警";
+"disks.openDetail" = "打开磁盘详情…";
+"seconds" = "秒";
+
+/* MARK: - 磁盘设置 */
+"settings.disks.watched" = "已监控磁盘";
+"settings.disks.empty" = "暂无磁盘。连接外接盘后开始监控。";
+"settings.disks.discover" = "正在发现磁盘…";
+
+/* MARK: - 通知设置 */
+"settings.notifications.title" = "通知";
+"settings.notifications.body" = "当磁盘温度超过阈值时通知你。";
+"settings.notifications.authorize" = "授权通知";
+"settings.notifications.authorized" = "已授权通知";
+"settings.notifications.denied" = "通知被拒绝 — 系统设置 → 通知 → DiskMon";
+"settings.notifications.launch" = "登录时启动";
+"settings.notifications.launch.help" = "登录时自动启动 DiskMon。";
+
+/* MARK: - 外观 */
+"settings.appearance.title" = "外观";
+"settings.appearance.language" = "语言";
+"settings.appearance.language.en" = "English";
+"settings.appearance.language.zh" = "简体中文";
+"settings.appearance.menubar" = "菜单栏脉动";
+"settings.appearance.menubar.help" = "严重状态时菜单栏出现细微脉动。";
+
+/* MARK: - 关于 */
+"about.version" = "版本 %@";
+"about.copyright" = "© 2026 déjà vu_tao（mian）、Cursor Agent、MiniMax Agent、gorkbuild";
+
+/* MARK: - 菜单栏 */
+"menubar.notready" = "—°";
+
+/* MARK: - 卡片(Popover)标题 */
+"card.temperature" = "温度";
+"card.smart" = "SMART";
+"card.history" = "历史";
+"card.lifetime" = "寿命";
+"card.health" = "健康";
+
+/* MARK: - 健康度标签 */
+"health.normal" = "健康";
+"health.warning" = "注意";
+"health.critical" = "临界";
+"health.danger" = "危险";
+
+/* MARK: - 温度卡副标 */
+"subtitle.starting" = "正在启动…";
+"subtitle.fda" = "需完整磁盘访问 — 系统设置 → 隐私与安全性";
+"subtitle.smartctl" = "smartctl 未安装 — brew install smartmontools";
+"subtitle.normal" = "健康 · 温度 %@° · 寿命 %@%%";
+"subtitle.warning" = "注意 · 温度或寿命接近阈值";
+"subtitle.critical" = "临界 · 立即备份数据";
+"subtitle.danger" = "危险 · 立即备份并检查硬盘";
+
+/* MARK: - SMART 字段名 */
+"smart.temperature" = "温度";
+"smart.percentageUsed" = "寿命";
+"smart.availableSpare" = "备块";
+"smart.dataRead" = "数据读取";
+"smart.dataWritten" = "数据写入";
+"smart.powerOnHours" = "上电小时";
+"smart.powerCycles" = "上电循环";
+"smart.unsafeShutdowns" = "异常断电";
+"smart.mediaErrors" = "介质错误";
+"smart.warningTempTime" = "警告温度时间";
+"smart.criticalTempTime" = "严重温度时间";
+
+/* MARK: - 折线图 */
+"chart.empty" = "等待数据…";
+"chart.window.1h" = "1时";
+"chart.window.24h" = "24时";
+"chart.window.7d" = "7天";
+
+/* MARK: - 磁盘选择 */
+"disk.watched" = "已监控磁盘";
+"disk.empty" = "无外接盘 — 连接后自动出现";
+"disk.noDisk" = "暂无磁盘";
+
+/* MARK: - Popover 底栏 */
+"popover.preferences" = "偏好设置…";
+"popover.quit" = "退出";
+
+/* MARK: - 通知文案 */
+"notification.title.bit0" = "DiskMon — 严重告警 0";
+"notification.title.bit4" = "DiskMon — 严重告警 4";
+"notification.title.normal" = "DiskMon — 正常";
+"notification.title.warning" = "DiskMon — 注意";
+"notification.title.critical" = "DiskMon — 临界";
+"notification.title.danger" = "DiskMon — 危险";
+"notification.body.bit0" = "%@ · 温度超阈值 · 立即备份";
+"notification.body.bit4" = "%@ · 备份或冗余失败 · 立即检查";
+"notification.body.normal" = "%@ · %@° · 健康";
+"notification.body.warning" = "%@ · %@° · 接近阈值";
+"notification.body.critical.temp" = "%@ · %@° · 温度临界";
+"notification.body.critical.lifetime" = "%@ · 寿命 %@%% · 即将耗尽";
+"notification.body.danger.media" = "%@ · 介质错误 %@ · 立即备份";
+"notification.body.danger.temp" = "%@ · %@° · 危险";
+
+/* MARK: - 完整磁盘访问引导 */
+"alert.fda.title" = "DiskMon 需要完整磁盘访问";
+"alert.fda.message" = "smartctl 读取 /dev/diskN 裸设备,需要完整磁盘访问(TCC)权限。\n\n系统设置 → 隐私与安全性 → 完整磁盘访问\n\n勾选 DiskMon 后,重新启动应用。";
+"alert.fda.openSettings" = "打开系统设置";
+"alert.fda.copyCommand" = "复制命令";
+"alert.fda.later" = "稍后";
+
+/* MARK: - 错误 */
+"error.smartctl.missing" = "smartctl 未安装。请运行: brew install smartmontools";
+"error.smartctl.short" = "smartctl 未安装";
+"error.fullDiskAccess.short" = "需要完整磁盘访问";
+"error.fda.long" = "DiskMon 需要完整磁盘访问,通过 smartctl 读取 SMART 数据。";
+"error.parse" = "无法解析 smartctl 输出";
+"error.commandFailed" = "smartctl 退码 %d";
+
+/* MARK: - SmartctlService 错误文案 */
+"errortag.smartctl.missing" = "未找到 smartctl。请通过 brew install smartmontools 安装。";
+"errortag.fda" = "DiskMon 需要完整磁盘访问读取 SMART 数据。";
+
+/* MARK: - 单位(v0.4.3 polish-I P2-5) */
+"unit.days" = "天";
+"unit.hours" = "小时";
+"unit.minutes" = "分钟";
+"unit.seconds" = "秒";
+"unit.watts" = "W";
+"unit.tb" = "TB";
+"unit.gb" = "GB";
+"unit.mb" = "MB";
+
+/* MARK: - 状态(v0.4.3 polish-I P2-5) */
+"status.good" = "健康";
+"status.warning" = "警告";
+"status.critical" = "严重";
+"status.danger" = "危险";
+"status.notavailable" = "不可用";
+
+/* MARK: - 顶栏 / 模块标题 / 按钮(v0.9.8 设置语言真正生效) */
+"topbar.tab.overview" = "总览";
+"topbar.tab.temperature" = "温度";
+"topbar.tab.capacity" = "容量";
+"topbar.tab.power" = "功耗";
+"topbar.tab.smart" = "SMART";
+"topbar.tab.more" = "更多";
+"module.overview.title" = "总览";
+"module.temperature.selected" = "当前盘";
+"module.power.title" = "功耗";
+"module.power.notAvailable" = "不可用";
+"module.power.rated" = "额定功耗，非实时瓦数";
+"module.power.waiting" = "额定功耗约 5 秒后出现（第一次轮询）";
+"module.power.usbNever" = "USB 桥不提供功耗，不是还没采到";
+"module.power.systemEst" = "系统估算，不是这块盘的功耗";
+"module.temperature.noSensor" = "此盘不报温度";
+"module.temperature.usbNever" = "USB 桥不提供温度，不是还没采到";
+"module.temperature.waiting" = "约 5 秒后出现（第一次轮询）";
+"module.temperature.noData" = "无数据";
+"card.smart.attributes" = "SMART 属性";
+"card.power" = "功耗";
+"card.link" = "链路";
+"card.selfTest" = "自检";
+"card.benchmark" = "测速";
+"card.integrity" = "文件系统";
+"popover.warnings" = "打开警告…";
+"popover.export" = "导出报告…";
+"popover.detail" = "打开磁盘详情…";
+"more.title" = "更多工具";
+"more.back" = "返回";
+"more.back.help" = "返回工具列表";
+"more.entry.link.title" = "链路健康";
+"more.entry.link.desc" = "雷电 / PCIe / USB 协商";
+"more.entry.test.title" = "SMART 自检";
+"more.entry.test.desc" = "短测 / 长测";
+"more.entry.bench.title" = "测速";
+"more.entry.bench.desc" = "顺序读写 MB/s";
+"more.entry.fs.title" = "文件系统完整性";
+"more.entry.fs.desc" = "只读校验卷";
+"more.route.link" = "链路健康";
+"more.route.test" = "SMART 自检";
+"more.route.bench" = "测速";
+"more.route.fs" = "文件系统";
+"module.test.runShort" = "短测";
+"module.test.runLong" = "长测";
+"tab.link.listTitle" = "全部磁盘 · 链路";
+"tab.test.listTitle" = "全部磁盘 · 自检";
+"tab.bench.listTitle" = "全部磁盘 · 测速";
+"tab.fs.listTitle" = "全部磁盘 · 文件系统";
+"tab.smart.fieldsTitle" = "SMART 字段 · 说明";
+"tab.smart.noData" = "无 SMART 数据";
+"tab.smart.usbBridge" = "USB 桥不透传 SMART，身份信息仍会抓取";
+"capture.usbBridge" = "USB 桥不透传 SMART。再等也不会出现温度。";
+"capture.pending" = "有传感器的盘一般第一次轮询约 5 秒内出现读数。";
+

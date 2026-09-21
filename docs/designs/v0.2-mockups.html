@@ -1,0 +1,1397 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>diskmon v0.2.0 — UI 视觉扩展 Design</title>
+
+  <!-- React 18 + Babel pinned (huashu-design standard) -->
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+
+  <!-- Fraunces (display) + Geist (body) - per user spec, Fraunces 主人硬要求 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-deep:        #0E0D11;
+      --bg-canvas:      #14131A;
+      --glass:          rgba(20, 18, 22, 0.55);
+      --glass-strong:   rgba(28, 24, 30, 0.78);
+      --glass-edge:     rgba(255, 255, 255, 0.08);
+      --amber:          #C8956C;
+      --amber-soft:     #E8B895;
+      --amber-deep:     #8A6240;
+      --text:           #F5F2EC;
+      --text-muted:     #9A928A;
+      --text-dim:       #5E5850;
+      --critical:       #C84A4A;
+      --warn:           #D9A55C;
+      --good:           #6CC895;
+      --read:           #6C95C8;
+      --write:          #6CC895;
+      --menu-bar-bg:    rgba(20, 19, 23, 0.85);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: 'JetBrains Mono', -apple-system, ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200, 149, 108, 0.08), transparent 70%),
+        radial-gradient(ellipse 100% 60% at 50% 100%, rgba(108, 149, 200, 0.04), transparent 70%),
+        var(--bg-deep);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 35mm film grain overlay (base64 <10KB) */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAaVklEQVR42j3ad7iPZRgH8MdIQhIqWmSFtlGppGFmxLGSpEVmpahEGWlJw+jIrGQXmZUVRduIosxEm6JCRtHnd+7ryh/nOt7f+z7PfX/X/bznnFSjRo1ChQoNGTLk0Ucfvf/+++vVq1etWrXzzz//m2++KVKkyEknnXTRRRfde++9Dz300IknntihQ4cNGzbcd999P/zww/PPP58nT55mzZq5c+bMmf5744033nPPPW+++aYVPPXBBx9ccskl77zzzqxZs5566qlTTz11165dtWrVev/99ytWrJidnb1gwYI77rijbNmyp512Ws+ePUeMGOG6japWrepZC/78888LFy5s3rz5kiVL5s+f37Vr16effrpcuXKtW7dWreu7d+9Obh08eLCaJk+efOaZZ/bq1Uvdr7322qpVq5555plzzjmnW7du/uvrsWPHPvvss19//bVBgwYK0upjjz325JNPbt68eeXKlaqxSN26df/5558LL7ywRIkSl19+eZMmTaLD0qVLf/jhh8uXL9+zZ0///v2PO+64K664QjU6h6Bmtm3b1rRpUxXnypXLmm3btr300ktffvllkFlk6dKlWVlZKaVJkyYdPnz4hBNO8JQdx40blx555JGzzjqrT58+uj/vvPMOHjwIkmuuuebaa6/966+/WrRooVYVaKBjx46vvPKKWi23ffv2n376qWbNmnp44IEH1DdjxowCBQroXxuYgdPZZ5/tv2XKlIHItGnTXOnduzdcbdG9e/frr7/+zz//7Nu3r69ffPHF7bfffvHFF2Nsy5YtwLbjunXrdHvGGWdUqVKlVKlSq1evtsVll13Wr18/vLmfCoCY3NquXTvrosNnFSpU2LFjh2dKlix5/PHHU4JdW7ZsaQ8bHzhwwN7IUZzesAewjz/+WJPAGzZsmNUOHTpESzYYOXIk7UHH9q+++qpvrLlv3z5I+75SpUrt27cHlg4ffvhh9QUcxYsX9xGhov2JJ57o1KmTZ6FsC/xre9SoUVTg0/Lly+fNmzf5D835j8rc5I45c+ZYl8gob+jQofaD9+jRo93t4erVq9euXdudV155JZbV+uyzz7744osE+tZbb9nPR1imk9NPP13/WnruuecYQKvTp0+/7rrrKIQewLRp0yZrEgPUGjVqVLRoUTs2bNgQCfg/5ZRTKIQHtMRI1ocvd+EHmvaFLBukm2+++csvv+RjsrMB4txHnbSLL6otVqzY3r17e/ToQUJcOHfu3LFjx/Icx3sKm0Q1depUHGrbVze4QjOFCxfWJBStrCvrWJDWeRqo3377rU8ZA1cDBw7UoStUftdddylaD1aziDv5HnDjx49fu3btlClTcIVbHdr666+/zpi4TZs2AF6zZo3nx4wZQwnatcTEiRN///33HTn/8EOsrVq14hO0vPHGG9BFvXV5gNUgpx95gjrmQekvv/zy1Vdf3XnnnStWrPj33391RfFuy507N+o2btzILeD77bffSAtqV199tUfQ68qECROCou+//x6UFvzxxx8HDRpEY/gkZqKSnN99910699xzVawUSlDW66+/ToLCpHHjxg8++KC9hYDq2VQ1uIOKrnxP2Z07d4YBD7AvIOibfefNmyc9XIzAZQlfLQ5gG6PFR6IWXlzEprAU0J9++qmvlStXlml16tRhSM7UGAKtDHgpwma+8WyErK0HDBiQlEshgolksU8YuCM7E0C7ZKM4PehYNCFB/LGmHh5//PHFixfztyu0KKAoRBG+WbZs2eeff44W4oY64WKYR8l69uzZSqR1u8jQfPnyqYNncLJ161bJSKW2ozTkyPe///7bXpqX6TIUvWaU6hFiZVxlJKQnwGDZKNA3zLTLKyizxwsvvIA1yU2s9CNw8WBL32D2yJEj4ix//vwUJc5ZBbSW5hPtaZjiqQVvmAGhmnzE4ujVEh3LE9/ceuutvjcHVWw7qSBayI/c+e3dd99lJCgIRjgSD61K2Jdeein5vyKABAzixsb+/ftpS+kWRQuaaAPMhpoAdTN9e5jGRAfP6IqCr7rqqvXr1/MDRMBDwYQEbOXKXLncpUsXuHAzziUbSm+66SYU+V5AMain7K4mc0N7w4cP14aeDRDj2YMohYVK7GJrSVO/fv0UE4ccZZZnJCbXk6bK+J12TVYX7UpXWMYj/EjFuDWnCAy5PpIEtlc3fm+55Raka9U9Lspl9Yk4qSCFZajUEnc4tyNQBKhCL7jgAmzAyxYCyu5ChRmEJLxuu+02AnMasAVY5bUGhH6KotlLCBASYLiejpFFKoShXU1bCMbUaQkgaYyP0f3HH38QjPS44YYbOJ7MWJC+ycANaLQNgGGJEMKDnGDxIGlpybnIsxpTn62tAGy9SVVBRIFyXNRiW7f6pBdqpC4a8dWzSaHONhAyGhAKMGQZ2lwIdVCRhLUYw/Mqk1d6pkvoshptWGjnzp3cLK1BQJ1xrGIJA8i5QyJrj/9UhhxHMXQ5uSiOkY4ePaoAmoGRgcDEvhpwvGsjAqNYqGvY+iSEf3XzA0VpOAFDAphqlrPfyJx/BQsWNLd5xUKyzB6ilmAYUSaC2Sqi1tGFeIwCeJx88skGEE41ZgV5hwGFyjEXFy1ahDRClV3OI26AEWJpFWqkjGeQuc3jtgYrHImZtISB4a289957T9ChCO1mji1kRhLwwkhDSKA8xyMQmpo8QP2uqBLqhPHRRx9ZTgIKeHSpD/xUQWmSivN8JGF35vzzCMm6wfZwMTTUR1eap1XrKJSnWQhAtESH5GGwIJndxZFC8W/wUaAHcegYAjigOOcyIVz0mawOfr4RhT7TN4tYSzxDSHuyUlCqRvdOoJomUA07RJkVKpNajGhquoFxVY908qNs28uuCD66giJdqZ6o9GZ9hfresjTJrGjxqZkNHYdT5wjL+kpUpMiBXOHwp3nRx59CJQEYNZqTRToGD6XGgVYnVMjQlCM9AAZ4AjDs1GrqQVcRYocAJCZUWJYNCJ1gSEtBbjOeXSF0fQKYYHSuCNUbefhUNLuTOw5tp1X12d12LqIIHBbkBB6QN77RoStWSCrgDzDgxRxgVnlKRbROi7xoe5kFcg3QPTC8OtGf6eMj9vAs6kDA7nyiedFMMOauMDXj+dKBBZCaNOaMCyvY1/ckpFy2dg+SJalHeJKifKNhXldGYIF8YnMes5rHjTkBnSCEaJI1y+iMybjbiMEXe5nnnMAkVERmclqisSweI/VZhTz0iSXKsZMwIQkucuhHEffbD94Sw0e6MrCEJoERp9WI0BW7O40D3taCwSlme84/mS4baEQQMyGj6gQ5jm3ESTKJ1AQt7E0QIa1FfGFZY6r55JNPQGtd36PbA85eccoHGHR99RGFOPCRAX6dCCgKVwSgdIEjZ/XjwMJ2FgGNs5NHhJISOYpoVcmK/KMSYHGwsWBlMEEaEFDTvzYYiepMQ/lmlxRvHpStSzBILks4FbqDyGCDH2yCEIP+izVaJ0HTEbm8hT0QaNv37MEDjrQ8CiSU2kP1eJB9Ik5B6nOipg39I5yOAQcRGmY5bZArK3qr1oNapYUs8akZKmmMDnYyTAnSqE6od4kuveBB2rGJPEjToddm4EGcyvDj4bffftunPOMRtkaX47t7LIJZTiA2oeREKHbtam/jT/LcfffdboMZCdEhaJlEpFjWDbJVhxZXtEELODhCHXASCfYAsr4Kj+b885G0gDJPJ0hwIUJtQ5dIcIVHUe8cZuwLMlMWuUTlvypQrhlM+lTOJ7xIAMQqW2BDFYaa6IyXXbOJzBjAoCAeHIoabFuQwPDjBs2wuDRzKORODKsV3rBzfjHFvBXYmkr1KakBgSIYcV1iOL6xnHM26p3XmUNKmNsiDKi2JwwPeIwGUMzW9sAVJIxSJvGspwJXDNA0t1ldG44hvlG3owHqWAg/HhHhrA9pXUkCfiBaOcE/aiBjOJK3N0xIWcc9vCeC3C+1OAqU5Jp5oRGa5pfXSEKCIo40QIhOGQ4wAHYOE9XqMCt0hdM4yRGMhOVdwINQ/0pEuvrALA1dITal6x/p2hAvEsLwke52wQyVAx6BaLcIOfke/KDxVaarx9GGCb210aQF2YYK6M0iia8d9MgdO04+JhRFxc8dkOtM66sORTKvCwSEsJpm6FJBDhFYhquabMAtxOoRLYljT8nEOJtQC8/QvaMY1yJTxTqUSB5EOFAdTHwjXvkNvfzAu2DVBs49qyozWyV4xoPJk4SMqUGgbtW9ZAAwJAAjpI13GJOEDBHYinBQMXq84ghEt5GfGSTCzS+ro0WMgpmg8UYPvmrYU4ojJxvLMapwES0qEGV4k1cIoQrXiYeKDBkZ5X7SlwFe5ZhbASCWTmoGv/WTxNWQqFarjhXqe/dJOmpxUIOHchnA0lyOKEIyMh2A4cokEDLvhAkDIJP/lOIjfKqekOQpTRMh8+CWNpSizxo1atgRA4ShVg86nOFBfvjUytQrQhDFY8g0srwkok493EJ4jgKJwQlRXLA5mRpV1O8N2HU2dR3wRELHeKROizquuGIbLBsODh3Ksih7qZKKOAQQTqao4DErE57MUbHVwElCXKsyMDvwOoTih8rdydkWMfIsQmyCzvyydZzwHWQcTq1Mw5RpeiT0CWygOmbZlZZgLEMEq5xyJlWQ4Wf6eHsiGwUplwz04EWbfBlATFnXHiDnbPEc5yINEBg9mMqOxE4QerAFfcZIUrq0xbnkVT1fig0TA97imDrUqiWoY9V/eYYKYtixWeZ9gHL4hihhgzWUkYGFNKZuD1CIfmDmNg0gkZnsTX+uWEXFcLKOO/UmvAkUVMxDIQQd2S8EeYxcvUPDgrmhqCUlEjqTsLispCKnRncCyHVLWYc46V7pIgc05OAtAC1kkuhETrlk+MsiFXvAfgyqJjTpksMA5m4lUg6piGdig7HlYCbvaJeOKcGggbrAlnS+As9FbSMZzAYfdGjX4pzGSBiQFgyjE5pBuDuFgXOxTd0pQvLly+d7KFOHb+Rk/Pxd9CXQgpNpTHVJwgbaBZuFyF0pMAiwiQf7gHRd3VDkb/zaW6IZ7NowoaHObfJEe7B0jwABhNLjxc3eThPqgDoCbcce1udmlTjCWIEtdR5xFD9hd6zQrUWMHY/wj5ElDBJ+YSZcHUUoxICUBupzLgI2ESNacXgHvOu+2kMgog4GnCevsGmWu6JWhxEWlBvWARXziDIXBbnsghEIBLExAldnMlRQne0ghTFbBG92JHRfZRcJMKoTDYB4iTM1jCWdZyRkYiuU9AlDoimLfckRfYxPmhYlGPNBIKrJp56nSNlKpsQmRqFCfgoCh1KUCA6Qc7mTkhOOmwWDNqSKqc+jbpYcDIY6FdsRA4QAI/GCYdjpP15Z+V5Sq1ar8WsOWGgpsXz8NFxlSheg+Bo0aFCPnH+SgZa8FXAqpXJ2oUKFtO4oih9JZzk56HQgl8SriUbHssU9rtAPmcavc7RH7jq3o35ElpuVIk81LD9ktDKkiA6phVA5B41EAUfHHqOdXpyiSQDtBpyNkpGJHRS71REAcsGDPRwD+Q/AKNaDK2piTZ8awBJT9WLHDRJDSji9asZZTc9a8hTYOJWgIWp9vvQg2CxrLELdRX5QFqELFnbySoTh/38ojx+UQopEPeVZeqZ+wyd+CJlYm0ctR3kq84yoVivx6YcXKUc+iHZNUpq6PWZL7emH1gGsAdlMGI7cEAKq4jrn/BMpLtKS9Y1Pu0p0UcHoCpUwbiBr503OIQxyJ04b0Z6KAaESDRAkGpmYhZzQ4G6MGnkJKhxtDPlAA2BACEErWiliREvxo23HAVnppAkk7EtD2UJvkkqkOBjHQTXz476UPGviqokRaQNM1g+/gdD7gCbNBNrAmwnlfnmgK8/ShrnOoB4HLuzz5vyzac2aNZHpuhvKlSsn6BKmhEO1nH/EoC0yxbspRh5ijs88bD/FwdLqzAA5pwBNYsAchbcGLBUMUEX8Eha08bNrzbOvZnBieBEkC5EN4QFIIqGdg7lZWdJJq4JOoXQoc2iB9hwU2BpYvGTekUDmxyomIhJBbkZgSn8sDyRRgCbfeE2Rx6ab4wCu7B3vLoI5fkUbv3QQcAyAU5PBp0wJLaXAQjDIeONSqIsHOsYAzSCW9ghauGlbqCNfWbB3Mya1YTVdeQSyGDbgAW0juU818iDZQwXEoD95B0WjzayRWSzokEORIDSDxYiYt7rtFUcAbnNDvC0gyjg36mVRnB9VgDobC1DSl5LxOxVXRLuosC8yhTWnCjdC0qFH9ENIRG+8iDukMZhiuBnWXMFRBKl6YZU5CymI+nFNgmTDPbziaARUivew7Z0jCMNHikMuPwHMlu6kdXYUiCgSxMQWL5AEaYRpla8MXY8oSANeG1ykeIjqigQowbLeTFwElpHKG477xGxfZGJJqlrBp4qUs3igUm8UGQbUKvLVGu9Q+tEMrhUnrQnGdU6KnwiJao9JJ6vYQ7ZETiPdNpwjyOnVlOEWKcm+ADNPEOssBHXqpwouMqFsjSs3YJ7YwIwuVXqvip+Wu0dmmD+EwA8kENOQHCSpHZOH6Zh+3A1RicGU/MdSwo4E3edJBSnLxEUIBtxsspgJCGVKkgjdY9mrDCA9aDXPFihQQGKQhM5xBSaHGeuINXoAEOAt4n2QgHnUDAGHGiQe07sNvbhiOYFpa7ugiHR9Y1ontGZnZ0PXorbhUTFvGLkVLSQIWhvYnvpVT6a65yrZRayg5dH4mQDk5IMgciylKKuJWgljUIDWI+SqVbu6h8RVCWBByeLkoXoUKUbPtiAeu7soPR0W3Z+VlRVzwGu3SQ9+p4dEsvGXIkLNigplGsdxxlJW/GpI3fFzBB6AsYBys4iQAwRDA3ZVCvbdhl8r2JJzHGC9PAgNMAk6PJtNlkURVp0UnNtJxVdigwVfSiF5zUK+0ZukIjNetzJh0xIURJCLMemT44r3Rl85Jn4UDAa08pmDVEx+48x5W/CRvpx1m57pwW2sEoccbVhRlQ4j4l8qcJcNBLx0ZgA3A4jLfRXZSmEDzVA/leuT9mznWYM2fhbvinpgCkHwKVI/LIoiAhMAEi/jAaAaqNoSQdowoTjGraKTTkjcFT3EH6zQKH2zCnN73mY0yg/21iQSOIqW6FCM2hVRMoCVpacI0qGRh30eUwpCAE+9GqArXZETUFBk9lmWAi3iokggaZygV20Eoo3MX6t40sCzvf9whtOs2W4/SJOd046Tgovx23muUoEIE946CYGR+4EDB8wgqMAvGKBgH2k+Xph0pVVcyT4a4ytZpFAUyUfUxU9IyV2VkBYSoKTD+Jkn/ZAfo3qEP3kPsu4ULUnRBGpcYwokNvYAqMxIb5i0brZ72PGQqOhVWfGLW7oUfCC3KzziL7nMCluSvsTwIgHa+Eshp182hQuvS14Ewl4RQokajWHt+SqvKMrNxGNlGDkykEP8wMp13CIBUcj3LCgzZyGQEzpJmKnqc1rEPjgtTVTqsxlIwMnxdrJW/LkN6khLFKqJMJxYbIw3A79Ezj/kINo3fEyQhol3I3eiFPPCgB4wj1gI8oaYj2kgfyCIYeditsEYHWqJs3lPMSDDYebv0AxCH5uUZIAEhpYt/Ace2Sz1aIAi5ZcN5KPprT0P81/8pYzrItk6Oqf4+M2cio1MiKhPTcTgnc7GIpWCRSG2QUMPSuRXL1WWNd2JHg/6gakAgJFxgTEtgUB6WgHJgIhZlBARPwJwt1gQYXYlaFpSik4gLXdVY+JiUJ9GgW00RkiGgAgmNodK/OhTJCCd7sHhOKhDK8h+1EFHgjEVKkQcjIxkJiY8eMMRt1ThTirlCpMEdtIGUdozAQ07m1rQqdH6aEwuUScYGIUtwO8+5pDiJIg+/agMFfyHOFcoxFGMorjCZHCSYQAyjT/KE5oeoRMnIteJUJXkS0ggABZjyAyOBCr76vb/n1EziZDADB+qyrPYi59cQVOQUBEXoZoNkOM0meIvKxwKTCIcxR/uAV6hTohc6xVJ06LTww4XZOce7yWumya05KQtNBFqS/iBxzur5PaWp2grqNLKKrCOlT1Lx6KZHWUrLCSEinGiNxwaajqETvz8i7kxSbHEYnfwgSP+7srxMeMBZtKG4zEzEYBSDHBHCScZw9KQIkG4YpZ2BSuipPK0nH9Eb2/YyD5yxySBUQUJOTxbHMB6cJ3qWIgv4YJb99Ct0Rs/ynWbdw8qIH0ZLVEgbRevsnGilijyUKkeJ0JbCwzTM8Uf/+ACMO4QL7LWzAIbDQhpvMfPoeBKqVbnECLxoFYRFb8NsZbiOEy5xqdRRaDsAQWTLl7B5KyUUz3nOF+RmdEOTjp0TBCGiqYNyUY2boA3BOEltbAEBfZVrYOw3e0L3MxvKY1hIQUPbTnoUSe3yRaz0GuKJ7FhButHktgGDJyjK+QKUBWQhwOsnZwZTTG0kK/VyNJmwNaqB23BJCLLoHACYCr6iVcwyuHgOPdrgIOliPkjKqSz/ilTxfEngZzNKmoAROYvd+OHCPH3gaggblazJQHEX+2JTqhToVOXQzLYcKpKLMkfgYAQN9MhDzCimlRpIBCx7dUHJv9VhPr4DcyWFWj4tLXoU4M3dHdqTAPq5gQELliwAO0+omGIIMFT+3P+oSszB0SnSUSv5Ah7l3SpGmcvxqVIikKcjSGEE1yLHYYDj7UEvCYtQh5CXZMeESO6wp6N9UD9EgP2dMi+Akd95M6ynEPKSuQuq7Gp6HRINgeApSQkW8RHlOmwRCxcoUJWNi6gmVhHWfKRwyQjPUAltA4zSJOKTyERf6drSFEkfoUVdAkGm4KIavGGQBv7xj1OKJD2qSgMFJEMIOKMv1+OPxpwJX7SRhjIhwu/GhHxgk+WFjQ99CltPSUDnU0wbPKwXCIjqLhK6w7S1ELW8VNI6oIHHhlUoYYl9hkUGyLVKQXGcWwUTcLHPZLROuAXWWqKN1qRoHm2k1eGjNQGFlFJUvzoFv+aMTTEi+EKb/dgnkcBj2HNwxFGCpB1GjM0xDTe/gNhIR0OZ2y4LQAAAABJRU5ErkJggg==");
+      background-size: 64px 64px;
+      opacity: 0.18;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Vignette */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #root { position: relative; z-index: 2; }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 64px 80px 120px;
+    }
+
+    /* Cover header */
+    .cover {
+      padding: 80px 0 100px;
+      border-bottom: 1px solid var(--glass-edge);
+      margin-bottom: 80px;
+    }
+    .cover-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding: 4px 10px;
+      border: 1px solid var(--amber-deep);
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 84px;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .cover h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--amber);
+    }
+    .cover-sub {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 22px;
+      color: var(--text-muted);
+      letter-spacing: -0.01em;
+      max-width: 720px;
+      margin-bottom: 32px;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 48px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+    .cover-meta span b { color: var(--text); font-weight: 500; }
+
+    /* Section header */
+    .section { margin-bottom: 120px; }
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 0.2em;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 48px;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .section-title em { font-style: italic; color: var(--amber); }
+    .section-desc {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin-bottom: 48px;
+      line-height: 1.55;
+    }
+
+    /* Glass panel (reusable) */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--glass-edge);
+      border-radius: 20px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    }
+
+    /* ====================== Section 1: Menu Bar Modes ====================== */
+    .menu-bar-stage {
+      background: linear-gradient(180deg, rgba(40, 35, 45, 0.6) 0%, rgba(20, 18, 25, 0.6) 100%);
+      border-radius: 16px;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .menu-bar-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(200,149,108,0.12), transparent 60%);
+      pointer-events: none;
+    }
+
+    .mb-real {
+      height: 32px;
+      width: 100%;
+      background: var(--menu-bar-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 14px;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .mb-real-left {
+      position: absolute;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #fff;
+      font-size: 13px;
+    }
+    .mb-real-left .apple { font-size: 14px; }
+    .mb-real-left .app-name { font-weight: 500; }
+    .mb-real-right { display: flex; align-items: center; gap: 14px; color: #fff; font-size: 13px; }
+    .mb-icon { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; opacity: 0.92; }
+
+    /* Status item variants (the only thing that changes per mode) */
+    .mb-status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #fff; font-variant-numeric: tabular-nums; }
+    .mb-status .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .mb-status .dot-amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .mb-status .dot-warn  { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+    .mb-status .dot-good  { background: var(--good); }
+    .mb-status .num-amber { color: var(--amber); }
+    .mb-status .num-warn  { color: var(--warn); }
+    .mb-spark { width: 36px; height: 14px; }
+
+    .mode-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      align-items: center;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--glass-edge);
+    }
+    .mode-row:last-child { border-bottom: 0; }
+    .mode-label {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .mode-label small {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-style: normal;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .mode-use {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ====================== Section 2: Disk Detail ====================== */
+    .disk-detail-stage {
+      padding: 40px;
+      background: linear-gradient(180deg, rgba(35, 30, 40, 0.4), rgba(15, 13, 20, 0.6));
+      border-radius: 16px;
+    }
+
+    .disk-window { background: #1a1820; border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.06); display: grid; grid-template-rows: 38px 1fr; min-height: 720px; }
+    .dw-titlebar {
+      background: linear-gradient(180deg, #2c2832, #1f1c25);
+      display: flex; align-items: center; padding: 0 14px; gap: 8px; border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    }
+    .dw-light { width: 12px; height: 12px; border-radius: 50%; border: 0.5px solid rgba(0,0,0,0.3); }
+    .dw-l-c { background: #ff5f57; }
+    .dw-l-m { background: #febc2e; }
+    .dw-l-x { background: #28c840; }
+    .dw-title { position: absolute; left: 0; right: 0; text-align: center; color: #aaa; font-size: 12px; pointer-events: none; font-family: -apple-system, sans-serif; }
+    .dw-titlebar { position: relative; }
+
+    .dw-body { display: grid; grid-template-columns: 280px 1fr; }
+    .dw-sidebar { background: rgba(0,0,0,0.25); border-right: 0.5px solid var(--glass-edge); padding: 16px 12px; }
+    .dw-sb-section { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 8px 6px; }
+    .dw-sb-item {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background 0.15s;
+    }
+    .dw-sb-item:hover { background: rgba(255,255,255,0.04); }
+    .dw-sb-item.active { background: rgba(200,149,108,0.12); }
+    .dw-sb-item.active .dw-sb-name { color: var(--amber-soft); }
+    .dw-sb-icon { width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0; }
+    .dw-sb-item.active .dw-sb-icon { color: var(--amber); }
+    .dw-sb-name { font-size: 13px; color: var(--text); flex: 1; font-family: -apple-system, sans-serif; }
+    .dw-sb-meta { font-size: 10px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .dw-sb-badge { width: 6px; height: 6px; border-radius: 50%; }
+
+    .dw-main { padding: 24px 28px 32px; overflow: hidden; }
+    .dw-breadcrumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; margin-bottom: 18px; }
+    .dw-breadcrumb span { color: var(--text-muted); }
+    .dw-breadcrumb em { color: var(--amber); font-style: normal; }
+
+    .dw-hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, rgba(200,149,108,0.07), rgba(200,149,108,0.02));
+      border: 1px solid var(--glass-edge);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+    .dw-hero-title { font-family: 'Fraunces', serif; font-weight: 400; font-size: 28px; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+    .dw-hero-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
+
+    /* Health ring */
+    .health-ring { position: relative; width: 96px; height: 96px; }
+    .health-ring svg { transform: rotate(-90deg); }
+    .health-ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .health-ring-pct { font-family: 'Fraunces', serif; font-weight: 400; font-size: 22px; color: var(--good); letter-spacing: -0.02em; }
+    .health-ring-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 2px; }
+
+    .dw-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      padding: 16px 18px;
+      background: var(--glass-strong);
+      border: 1px solid var(--glass-edge);
+      border-radius: 14px;
+      backdrop-filter: blur(20px);
+    }
+    .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .stat-label .pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber); }
+    .stat-value { font-family: 'Fraunces', serif; font-weight: 300; font-size: 32px; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
+    .stat-value sup, .stat-value .unit { font-size: 14px; color: var(--text-muted); font-weight: 400; margin-left: 2px; }
+    .stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 6px; letter-spacing: 0.04em; }
+    .stat-sub .ok { color: var(--good); }
+    .stat-sub .warn { color: var(--warn); }
+    .stat-sub .crit { color: var(--critical); }
+
+    .dw-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .chart-card {
+      padding: 18px 20px;
+      background: var(--glass-strong);
+      border: 1px solid var(--glass-edge);
+      border-radius: 14px;
+      backdrop-filter: blur(20px);
+    }
+    .chart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+    .chart-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 16px; color: var(--text); }
+    .chart-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .chart-svg { width: 100%; height: 80px; }
+
+    .chart-legend { display: flex; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 8px; }
+    .chart-legend .sw { display: inline-block; width: 8px; height: 2px; vertical-align: middle; margin-right: 5px; }
+
+    .dw-bottom { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+    .smart-card { padding: 18px 20px; background: var(--glass-strong); border: 1px solid var(--glass-edge); border-radius: 14px; backdrop-filter: blur(20px); }
+    .smart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+    .smart-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 16px; color: var(--text); }
+    .smart-table { width: 100%; border-collapse: collapse; }
+    .smart-table tr { border-bottom: 0.5px solid var(--glass-edge); }
+    .smart-table tr:last-child { border-bottom: 0; }
+    .smart-table td { padding: 7px 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; vertical-align: middle; }
+    .smart-table td:first-child { color: var(--text-dim); width: 50%; }
+    .smart-table td:nth-child(2) { color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+    .smart-table td:last-child { color: var(--amber); text-align: right; font-size: 10px; width: 60px; padding-left: 12px; }
+
+    .pie-card { padding: 18px 20px; background: var(--glass-strong); border: 1px solid var(--glass-edge); border-radius: 14px; backdrop-filter: blur(20px); display: flex; flex-direction: column; }
+    .pie-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+    .pie-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 16px; color: var(--text); }
+    .pie-body { display: flex; align-items: center; gap: 18px; flex: 1; }
+    .pie-svg { width: 110px; height: 110px; flex-shrink: 0; }
+    .pie-legend { flex: 1; }
+    .pie-row { display: flex; justify-content: space-between; padding: 4px 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+    .pie-row .label { color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .pie-row .sw { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+    .pie-row .val { color: var(--text); font-variant-numeric: tabular-nums; }
+    .pie-total { font-family: 'Fraunces', serif; font-weight: 300; font-size: 26px; color: var(--text); letter-spacing: -0.02em; margin-top: 6px; }
+    .pie-total-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+
+    /* ====================== Section 3: ControlWidget ====================== */
+    .control-stage {
+      background: linear-gradient(180deg, #0a0a0e 0%, #1a1820 100%);
+      border-radius: 16px;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .control-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 0%, rgba(108,149,200,0.08), transparent 60%);
+      pointer-events: none;
+    }
+    .control-title {
+      text-align: center;
+      font-family: -apple-system, "SF Pro Display", sans-serif;
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .control-frame {
+      max-width: 720px;
+      margin: 0 auto;
+      background: rgba(20, 18, 25, 0.7);
+      backdrop-filter: blur(60px) saturate(180%);
+      border-radius: 28px;
+      padding: 28px 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+    .control-section { margin-bottom: 22px; }
+    .control-section-label {
+      font-family: -apple-system, sans-serif;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+    .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .ctl-widget {
+      aspect-ratio: 2 / 1;
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .ctl-widget:hover { background: rgba(255,255,255,0.1); }
+    .ctl-widget.diskmon { background: linear-gradient(135deg, rgba(200,149,108,0.18), rgba(200,149,108,0.04)); border-color: rgba(200,149,108,0.25); }
+    .ctl-widget.wide { grid-column: span 2; }
+    .ctl-head { display: flex; justify-content: space-between; align-items: flex-start; }
+    .ctl-icon { width: 22px; height: 22px; }
+    .ctl-icon-amber { color: var(--amber); }
+    .ctl-name { font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600; color: #fff; }
+    .ctl-name small { display: block; font-size: 9px; font-weight: 400; color: rgba(255,255,255,0.6); margin-top: 2px; letter-spacing: 0.04em; }
+
+    .diskmon-ctl-body { display: flex; flex-direction: column; gap: 4px; }
+    .diskmon-ctl-stats { display: flex; align-items: baseline; gap: 6px; }
+    .diskmon-ctl-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; color: #fff; letter-spacing: -0.02em; }
+    .diskmon-ctl-unit { font-size: 10px; color: rgba(255,255,255,0.5); }
+    .diskmon-ctl-spark { width: 100%; height: 20px; margin-top: 2px; }
+
+    /* ====================== Section 4: App Icons ====================== */
+    .icon-stage { padding: 40px; background: linear-gradient(180deg, rgba(35, 30, 40, 0.4), rgba(15, 13, 20, 0.6)); border-radius: 16px; }
+    .icon-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .icon-cell { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .icon-tile { width: 128px; height: 128px; position: relative; box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(255,255,255,0.06); transition: transform 0.2s; }
+    .icon-tile:hover { transform: translateY(-3px) scale(1.02); }
+    .icon-tile svg { width: 100%; height: 100%; display: block; border-radius: 28.4%; }
+    .icon-name { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--text); text-align: center; }
+    .icon-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.18em; }
+
+    /* ====================== Section 5: Popover ====================== */
+    .popover-stage {
+      background: linear-gradient(180deg, rgba(35, 30, 40, 0.4), rgba(15, 13, 20, 0.6));
+      border-radius: 16px;
+      padding: 60px 40px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 60px;
+    }
+    .popover-arrow {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 260px;
+      line-height: 1.6;
+      padding-top: 40px;
+    }
+    .popover-arrow b { color: var(--amber); font-weight: 400; }
+
+    .popover {
+      width: 380px;
+      background: var(--glass-strong);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--glass-edge);
+      border-radius: 20px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .pop-header { padding: 16px 18px 12px; border-bottom: 0.5px solid var(--glass-edge); display: flex; align-items: center; justify-content: space-between; }
+    .pop-title { font-family: 'Fraunces', serif; font-weight: 400; font-style: italic; font-size: 16px; color: var(--text); }
+    .pop-version { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.12em; }
+    .pop-body { padding: 14px 18px 18px; }
+    .pop-hero { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .pop-temp { font-family: 'Fraunces', serif; font-weight: 300; font-size: 56px; line-height: 1; color: var(--amber); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+    .pop-temp sup { font-size: 18px; color: var(--amber-soft); margin-left: 2px; vertical-align: top; line-height: 1.6; }
+    .pop-temp-meta { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
+    .pop-temp-meta .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; }
+    .pop-temp-meta .val { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+    .pop-temp-meta .val.amber { color: var(--amber); }
+
+    /* New: Power card (v0.2.0) */
+    .pop-power {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(200,149,108,0.08);
+      border: 0.5px solid rgba(200,149,108,0.2);
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .pop-power-icon { width: 20px; height: 20px; color: var(--amber); flex-shrink: 0; }
+    .pop-power-text { flex: 1; }
+    .pop-power-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; }
+    .pop-power-val { font-family: 'Fraunces', serif; font-weight: 400; font-size: 18px; color: var(--amber-soft); font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .pop-power-val small { font-size: 11px; color: var(--text-muted); margin-left: 2px; font-family: 'JetBrains Mono', monospace; }
+    .pop-power-delta { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--good); }
+    .pop-power-delta.warn { color: var(--warn); }
+
+    /* Disk rows */
+    .pop-disks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .pop-disk { display: grid; grid-template-columns: 20px 1fr auto auto; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 0.5px solid var(--glass-edge); }
+    .pop-disk:last-child { border-bottom: 0; }
+    .pop-disk-icon { color: var(--text-muted); }
+    .pop-disk-icon.warn { color: var(--warn); }
+    .pop-disk-name { font-family: -apple-system, sans-serif; font-size: 12px; color: var(--text); }
+    .pop-disk-name small { display: block; font-size: 9px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+    .pop-disk-temp { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; min-width: 50px; text-align: right; }
+    .pop-disk-temp.warn { color: var(--warn); }
+    .pop-disk-power { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); min-width: 50px; text-align: right; }
+    .pop-disk-power b { color: var(--amber-soft); font-weight: 500; }
+
+    /* New: 24h power sparkline */
+    .pop-spark-section { padding: 12px 0; border-top: 0.5px solid var(--glass-edge); margin-bottom: 12px; }
+    .pop-spark-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .pop-spark-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.14em; text-transform: uppercase; }
+    .pop-spark-val { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
+    .pop-spark-val b { color: var(--amber-soft); font-weight: 500; }
+    .pop-spark-svg { width: 100%; height: 36px; }
+
+    .pop-footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 0; }
+    .pop-btn {
+      font-family: -apple-system, sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+    .pop-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .pop-btn .dots { letter-spacing: 1px; }
+
+    /* ====================== Utility ====================== */
+    .footer {
+      text-align: center;
+      padding: 80px 0 40px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+    }
+    .footer em { font-family: 'Fraunces', serif; font-style: italic; color: var(--amber); font-size: 14px; }
+
+    .anchor { position: relative; }
+    .anchor-id { position: absolute; top: -80px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="env,react">
+    // ============== macos_window.jsx (skill asset) — adapted inline ==============
+    function MacosWindow({ title = '', width = 900, height = 600, darkMode = true, children, style }) {
+      const s = {
+        window: {
+          display: 'inline-block',
+          background: darkMode ? '#1a1820' : '#fff',
+          borderRadius: 10,
+          overflow: 'hidden',
+          boxShadow: '0 30px 80px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.06)',
+        },
+        titleBar: {
+          height: 38,
+          background: darkMode ? 'linear-gradient(to bottom, #2c2832, #1f1c25)' : 'linear-gradient(to bottom, #e8e8e8, #d8d8d8)',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 14px',
+          borderBottom: darkMode ? '0.5px solid rgba(255,255,255,0.06)' : '0.5px solid rgba(0,0,0,0.1)',
+          position: 'relative',
+          userSelect: 'none',
+        },
+        title: {
+          position: 'absolute',
+          left: 0, right: 0, textAlign: 'center',
+          fontSize: 12, color: darkMode ? '#aaa' : '#333', fontWeight: 500,
+          fontFamily: '-apple-system, sans-serif', pointerEvents: 'none',
+        },
+      };
+      return (
+        <div style={{ ...s.window, ...style }}>
+          <div style={s.titleBar}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57', border: '0.5px solid rgba(0,0,0,0.2)' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e', border: '0.5px solid rgba(0,0,0,0.2)' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840', border: '0.5px solid rgba(0,0,0,0.2)' }} />
+            </div>
+            {title && <div style={s.title}>{title}</div>}
+          </div>
+          <div style={{ width, height, position: 'relative' }}>
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    // ============== SF Symbol-as-SVG (use simple geometric icons, no emoji) ==============
+    const Icon = ({ name, size = 16, color = 'currentColor' }) => {
+      const s = { width: size, height: size, display: 'inline-block', verticalAlign: 'middle' };
+      switch (name) {
+        case 'externaldrive':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="6" width="18" height="12" rx="2" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+            <circle cx="17" cy="14" r="0.5" fill={color} />
+          </svg>);
+        case 'externaldrive.fill':
+          return (<svg viewBox="0 0 24 24" style={s} fill={color} stroke="none">
+            <rect x="3" y="6" width="18" height="12" rx="2" />
+            <rect x="3" y="9" width="18" height="2" fill="rgba(0,0,0,0.18)" />
+            <circle cx="17" cy="14" r="0.8" fill="rgba(255,255,255,0.4)" />
+          </svg>);
+        case 'thermometer':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 4a2 2 0 0 0-2 2v9a4 4 0 1 0 4 0V6a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="16.5" r="2" fill={color} />
+          </svg>);
+        case 'bolt':
+          return (<svg viewBox="0 0 24 24" style={s} fill={color}>
+            <path d="M13 2L4 14h7l-1 8 9-12h-7z" />
+          </svg>);
+        case 'wifi':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round">
+            <path d="M2 9c5.5-5 14.5-5 20 0" /><path d="M5 12.5c4-3.5 10-3.5 14 0" /><path d="M8.5 16c2-1.5 5-1.5 7 0" /><circle cx="12" cy="19" r="1" fill={color} />
+          </svg>);
+        case 'bluetooth':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round">
+            <path d="M6 6l12 12-6 6V4l6 6L6 20" />
+          </svg>);
+        case 'airdrop':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+            <path d="M5 16c4-6 10-6 14 0" /><path d="M8 13c3-3 5-3 8 0" /><path d="M11 10c1-1 1-1 2 0" /><circle cx="12" cy="19" r="1" fill={color} />
+          </svg>);
+        case 'battery.100':
+          return (<svg viewBox="0 0 26 14" style={s} fill="none" stroke={color} strokeWidth="1">
+            <rect x="0.5" y="0.5" width="22" height="13" rx="3" />
+            <rect x="23" y="4" width="2.5" height="6" rx="1" fill={color} stroke="none" />
+            <rect x="2" y="2" width="19" height="10" rx="1.5" fill={color} stroke="none" />
+          </svg>);
+        case 'speaker.wave.3':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+            <path d="M4 9h3l5-4v14l-5-4H4z" fill={color} />
+            <path d="M16 8a4 4 0 0 1 0 8" /><path d="M18.5 5.5a8 8 0 0 1 0 13" />
+          </svg>);
+        case 'moon.fill':
+          return (<svg viewBox="0 0 24 24" style={s} fill={color}>
+            <path d="M21 13a9 9 0 0 1-10-10 9 9 0 1 0 10 10z" />
+          </svg>);
+        case 'gear':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>);
+        case 'chart.line':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round">
+            <path d="M3 18l5-6 4 3 7-9" />
+          </svg>);
+        case 'chart.pie':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5">
+            <path d="M21 12A9 9 0 1 1 12 3v9z" fill={color} stroke="none" opacity="0.8" />
+            <path d="M21 12A9 9 0 0 0 12 3v9h9z" />
+          </svg>);
+        case 'lock':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5">
+            <rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          </svg>);
+        case 'arrow.up.right':
+          return (<svg viewBox="0 0 24 24" style={s} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+            <path d="M7 17L17 7" /><path d="M8 7h9v9" />
+          </svg>);
+        default: return null;
+      }
+    };
+
+    // ============== Helpers ==============
+    const Sparkline = ({ data, color = '#C8956C', w = 80, h = 24, stroke = 1.5, fillOpacity = 0.15, showArea = true }) => {
+      if (!data || data.length === 0) return null;
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = max - min || 1;
+      const step = w / (data.length - 1);
+      const pts = data.map((v, i) => [i * step, h - ((v - min) / range) * (h - 4) - 2]);
+      const path = pts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ');
+      const area = `${path} L${w},${h} L0,${h} Z`;
+      return (
+        <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ width: '100%', height: h }}>
+          {showArea && <path d={area} fill={color} fillOpacity={fillOpacity} stroke="none" />}
+          <path d={path} stroke={color} strokeWidth={stroke} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    };
+
+    // ============== Section 1: Menu Bar Status Modes ==============
+    const Section1 = () => {
+      // 24h temp data, peak around 14:00
+      const tempData = [33, 33, 34, 34, 35, 35, 36, 36, 36, 37, 38, 39, 41, 40, 38, 36, 35, 35, 36, 36, 35, 34, 34, 33];
+
+      const MBMenuBar = ({ children }) => (
+        <div className="mb-real">
+          <div className="mb-real-left">
+            <span className="apple">⌘</span>
+            <span className="app-name">Finder</span>
+            <span>File</span><span>Edit</span><span>View</span>
+          </div>
+          <div className="mb-real-right">
+            <span className="mb-icon"><Icon name="battery.100" size={20} color="#fff" /></span>
+            <span className="mb-icon"><Icon name="wifi" size={14} color="#fff" /></span>
+            <span style={{ fontSize: 12 }}>Wed Sep 1 18:16</span>
+            {children}
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="section anchor" id="sec1">
+          <div className="anchor-id" />
+          <div className="section-num">SECTION 01 / 05</div>
+          <h2 className="section-title">菜单栏 <em>Status Item</em> 多模式</h2>
+          <p className="section-desc">
+            macOS 菜单栏右侧 4 种 status item 形态 — 用户在 v0.2.0 Settings → Menu Bar Mode 里切换。
+            设计原则:克制 vs 信息密度;默认 D(全 OK),Warning 触发时自动切 A 给最热盘。
+          </p>
+
+          <div className="menu-bar-stage">
+            <div className="mode-row">
+              <div>
+                <div className="mode-label"><small>MODE A</small>温度优先</div>
+                <div className="mode-use">用 户场景:随时看最热盘温度。Warning 触发时系统自动切这个。</div>
+              </div>
+              <MBMenuBar>
+                <span className="mb-status">
+                  <Icon name="thermometer" size={14} color="#C8956C" />
+                  <span className="num-amber">41</span>
+                  <span style={{ fontSize: 11, color: 'var(--amber)' }}>°C</span>
+                </span>
+              </MBMenuBar>
+            </div>
+
+            <div className="mode-row">
+              <div>
+                <div className="mode-label"><small>MODE B</small>健康度优先</div>
+                <div className="mode-use">用户场景:多盘用户一眼看 "2 Good / 1 Warning"。</div>
+              </div>
+              <MBMenuBar>
+                <span className="mb-status">
+                  <span className="dot dot-good"></span>
+                  <span>2</span>
+                  <span style={{ opacity: 0.5, fontSize: 11 }}>·</span>
+                  <span className="dot dot-warn"></span>
+                  <span>1</span>
+                </span>
+              </MBMenuBar>
+            </div>
+
+            <div className="mode-row">
+              <div>
+                <div className="mode-label"><small>MODE C</small>Sparkline</div>
+                <div className="mode-use">用户场景:看 24h 趋势 — 高烧期 / idle 期一眼判。</div>
+              </div>
+              <MBMenuBar>
+                <span className="mb-status">
+                  <span className="mb-spark">
+                    <Sparkline data={tempData} color="#C8956C" w={36} h={14} stroke={1.3} fillOpacity={0.25} />
+                  </span>
+                  <span className="num-amber" style={{ fontSize: 12 }}>36°</span>
+                </span>
+              </MBMenuBar>
+            </div>
+
+            <div className="mode-row">
+              <div>
+                <div className="mode-label"><small>MODE D</small>整体 OK</div>
+                <div className="mode-use">默认态。3 盘全 Good 时,只剩 1 个 SF Symbol + 点。最克制。</div>
+              </div>
+              <MBMenuBar>
+                <span className="mb-status">
+                  <Icon name="externaldrive.fill" size={16} color="#fff" />
+                  <span className="dot dot-good"></span>
+                </span>
+              </MBMenuBar>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============== Section 2: Disk Detail Deep View ==============
+    const Section2 = () => {
+      const temp24h = [33, 33, 34, 34, 35, 35, 36, 36, 36, 37, 38, 39, 41, 40, 38, 36, 35, 35, 36, 36, 35, 34, 34, 33];
+      const power24h = [0.8, 0.8, 0.8, 0.9, 1.2, 1.5, 2.1, 2.8, 3.4, 4.2, 4.0, 3.5, 4.2, 3.8, 2.5, 1.8, 1.2, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8];
+
+      // Health ring 95%
+      const HealthRing = ({ pct = 95 }) => {
+        const r = 38, c = 2 * Math.PI * r;
+        const offset = c - (pct / 100) * c;
+        return (
+          <div className="health-ring">
+            <svg viewBox="0 0 96 96" width="96" height="96">
+              <circle cx="48" cy="48" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+              <circle cx="48" cy="48" r={r} fill="none" stroke="#6CC895" strokeWidth="6" strokeLinecap="round"
+                strokeDasharray={c} strokeDashoffset={offset} />
+            </svg>
+            <div className="health-ring-text">
+              <div className="health-ring-pct">{pct}</div>
+              <div className="health-ring-label">% HEALTH</div>
+            </div>
+          </div>
+        );
+      };
+
+      const PieCapacity = () => {
+        // 3 partitions: free 38%, photos 32%, projects 18%, system 12%
+        const data = [
+          { label: 'Free Space', val: '380 GB', pct: 38, color: '#3a3742' },
+          { label: 'Active Projects', val: '320 GB', pct: 32, color: '#C8956C' },
+          { label: 'Photos Library', val: '180 GB', pct: 18, color: '#8A6240' },
+          { label: 'System / Backups', val: '120 GB', pct: 12, color: '#6C95C8' },
+        ];
+        const r = 40, cx = 55, cy = 55;
+        let acc = 0;
+        return (
+          <>
+            <svg viewBox="0 0 110 110" className="pie-svg">
+              {data.map((d, i) => {
+                const start = (acc / 100) * 2 * Math.PI;
+                acc += d.pct;
+                const end = (acc / 100) * 2 * Math.PI;
+                const x1 = cx + r * Math.sin(start), y1 = cy - r * Math.cos(start);
+                const x2 = cx + r * Math.sin(end), y2 = cy - r * Math.cos(end);
+                const large = (end - start) > Math.PI ? 1 : 0;
+                return <path key={i} d={`M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`} fill={d.color} stroke="rgba(20,18,22,0.6)" strokeWidth="1" />;
+              })}
+              <circle cx={cx} cy={cy} r="22" fill="#1a1820" />
+            </svg>
+            <div className="pie-legend">
+              {data.map((d, i) => (
+                <div className="pie-row" key={i}>
+                  <span className="label"><span className="sw" style={{ background: d.color }} />{d.label}</span>
+                  <span className="val">{d.val}</span>
+                </div>
+              ))}
+              <div className="pie-total">1.0 TB</div>
+              <div className="pie-total-sub">TOTAL CAPACITY</div>
+            </div>
+          </>
+        );
+      };
+
+      return (
+        <div className="section anchor" id="sec2">
+          <div className="anchor-id" />
+          <div className="section-num">SECTION 02 / 05</div>
+          <h2 className="section-title">磁盘详情 <em>深看页</em></h2>
+          <p className="section-desc">
+            全屏 macOS app window。左侧 280px 列表,右侧主区:健康度环 + 4 大数字(温度 / 容量 / <b style={{color:'#C8956C', fontStyle:'normal'}}>功耗</b> / 寿命)
+            + 2 个 24h 图表(温度 + 功耗)+ SMART 表 + 容量饼图。
+            v0.2.0 重点:<b style={{color:'#C8956C', fontStyle:'normal'}}>实时功耗</b>(smartctl Power Consumption / IOKit)。
+          </p>
+
+          <div className="disk-detail-stage">
+            <div className="disk-window">
+              <div className="dw-titlebar">
+                <div className="dw-light dw-l-c" />
+                <div className="dw-light dw-l-m" />
+                <div className="dw-light dw-l-x" />
+                <div className="dw-title">diskmon — Deep View</div>
+              </div>
+
+              <div className="dw-body">
+                <div className="dw-sidebar">
+                  <div className="dw-sb-section">External Volumes</div>
+                  <div className="dw-sb-item active">
+                    <span className="dw-sb-icon"><Icon name="externaldrive.fill" size={18} color="#C8956C" /></span>
+                    <span className="dw-sb-name">applelog<span style={{display:'block', fontSize:10, color:'var(--text-dim)'}}>WD SN570 · 1 TB</span></span>
+                    <span className="dw-sb-badge" style={{ background: '#6CC895' }} />
+                  </div>
+                  <div className="dw-sb-item">
+                    <span className="dw-sb-icon"><Icon name="externaldrive.fill" size={18} /></span>
+                    <span className="dw-sb-name">wd_sn550<span style={{display:'block', fontSize:10, color:'var(--text-dim)'}}>WD SN550 · 1 TB</span></span>
+                    <span className="dw-sb-badge" style={{ background: '#D9A55C' }} />
+                  </div>
+                  <div className="dw-sb-section" style={{ marginTop: 12 }}>Internal</div>
+                  <div className="dw-sb-item">
+                    <span className="dw-sb-icon"><Icon name="externaldrive.fill" size={18} /></span>
+                    <span className="dw-sb-name">Macintosh HD<span style={{display:'block', fontSize:10, color:'var(--text-dim)'}}>Apple AP0512Z · 500 GB</span></span>
+                    <span className="dw-sb-badge" style={{ background: '#6CC895' }} />
+                  </div>
+
+                  <div className="dw-sb-section" style={{ marginTop: 12 }}>System</div>
+                  <div className="dw-sb-item" style={{ opacity: 0.7 }}>
+                    <span className="dw-sb-icon"><Icon name="gear" size={18} /></span>
+                    <span className="dw-sb-name">Preferences…</span>
+                  </div>
+                  <div className="dw-sb-item" style={{ opacity: 0.7 }}>
+                    <span className="dw-sb-icon"><Icon name="chart.line" size={18} /></span>
+                    <span className="dw-sb-name">All History</span>
+                  </div>
+                </div>
+
+                <div className="dw-main">
+                  <div className="dw-breadcrumb">
+                    External / <span>applelog</span> / <em>Deep View</em>
+                  </div>
+
+                  <div className="dw-hero">
+                    <HealthRing pct={95} />
+                    <div>
+                      <div className="dw-hero-title">applelog</div>
+                      <div className="dw-hero-sub">/Volumes/applelog · WD Blue SN570 1TB NVMe · TB4 bridge</div>
+                      <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'var(--good)', padding: '3px 8px', border: '0.5px solid rgba(108,200,149,0.3)', borderRadius: 4, letterSpacing: '0.1em' }}>● GOOD</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'var(--text-dim)', padding: '3px 8px', border: '0.5px solid var(--glass-edge)', borderRadius: 4, letterSpacing: '0.1em' }}>TB4 · 40 Gb/s</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'var(--text-dim)', padding: '3px 8px', border: '0.5px solid var(--glass-edge)', borderRadius: 4, letterSpacing: '0.1em' }}>SMART OK</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dw-stats">
+                    <div className="stat-card">
+                      <div className="stat-label"><span className="pip" />Temperature</div>
+                      <div className="stat-value">36<span className="unit">°C</span></div>
+                      <div className="stat-sub">peak 41°C at 14:00 · <span className="ok">nominal</span></div>
+                    </div>
+                    <div className="stat-card">
+                      <div className="stat-label"><span className="pip" style={{background: '#6C95C8'}} />Capacity</div>
+                      <div className="stat-value">62<span class className="unit">%</span></div>
+                      <div className="stat-sub">620 GB / 1.0 TB used</div>
+                    </div>
+                    <div className="stat-card" style={{ borderColor: 'rgba(200,149,108,0.3)', background: 'linear-gradient(135deg, rgba(200,149,108,0.08), rgba(200,149,108,0.02))' }}>
+                      <div className="stat-label" style={{ color: 'var(--amber-soft)' }}><span className="pip" style={{background: 'var(--amber)'}} />Power · NEW</div>
+                      <div className="stat-value">4.2<span className="unit">W</span></div>
+                      <div className="stat-sub">read · 1.8W write · <b style={{color:'var(--amber-soft)'}}>0.8W idle</b></div>
+                    </div>
+                    <div className="stat-card">
+                      <div className="stat-label"><span className="pip" style={{background: 'var(--good)'}} />Lifespan</div>
+                      <div className="stat-value">95<span className="unit">%</span></div>
+                      <div className="stat-sub">TBW 142 / 600 · <span className="ok">7.2 yr est.</span></div>
+                    </div>
+                  </div>
+
+                  <div className="dw-charts">
+                    <div className="chart-card">
+                      <div className="chart-head">
+                        <div className="chart-title">24h Temperature</div>
+                        <div className="chart-tag">°C</div>
+                      </div>
+                      <div className="chart-svg">
+                        <Sparkline data={temp24h} color="#C8956C" w={300} h={80} stroke={1.8} fillOpacity={0.18} />
+                      </div>
+                      <div className="chart-legend">
+                        <span><span className="sw" style={{background:'#C8956C'}}/>Temperature</span>
+                        <span style={{ marginLeft: 'auto' }}>avg <b style={{color:'#fff'}}>35.5°</b> · peak <b style={{color:'var(--amber-soft)'}}>41°</b></span>
+                      </div>
+                    </div>
+                    <div className="chart-card" style={{ borderColor: 'rgba(200,149,108,0.25)' }}>
+                      <div className="chart-head">
+                        <div className="chart-title">24h Power Consumption · NEW</div>
+                        <div className="chart-tag" style={{ color: 'var(--amber)' }}>WATTS</div>
+                      </div>
+                      <div className="chart-svg">
+                        <Sparkline data={power24h} color="#E8B895" w={300} h={80} stroke={1.8} fillOpacity={0.22} />
+                      </div>
+                      <div className="chart-legend">
+                        <span><span className="sw" style={{background:'#E8B895'}}/>Power draw</span>
+                        <span style={{ marginLeft: 'auto' }}>avg <b style={{color:'#fff'}}>1.6W</b> · peak <b style={{color:'var(--amber-soft)'}}>4.2W</b></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dw-bottom">
+                    <div className="smart-card">
+                      <div className="smart-head">
+                        <div className="smart-title">SMART Attributes</div>
+                        <div className="chart-tag">9 / 30</div>
+                      </div>
+                      <table className="smart-table">
+                        <tbody>
+                          <tr><td>Reallocated Sectors</td><td>0</td><td style={{color:'var(--good)'}}>OK</td></tr>
+                          <tr><td>Power-On Hours</td><td>4 217</td><td>—</td></tr>
+                          <tr><td>Temperature Celsius</td><td>36</td><td style={{color:'var(--amber-soft)'}}>36°</td></tr>
+                          <tr><td>Wear Leveling Count</td><td>5</td><td>95%</td></tr>
+                          <tr><td>Total LBAs Written</td><td>2.98 TB</td><td>—</td></tr>
+                          <tr><td>UDMA CRC Errors</td><td>0</td><td style={{color:'var(--good)'}}>OK</td></tr>
+                          <tr><td>Power Consumption</td><td>4.2 W</td><td style={{color:'var(--amber-soft)'}}>read</td></tr>
+                          <tr><td>Available Spare</td><td>100%</td><td style={{color:'var(--good)'}}>OK</td></tr>
+                          <tr><td>Critical Warning</td><td>0x00</td><td style={{color:'var(--good)'}}>OK</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="pie-card">
+                      <div className="pie-head">
+                        <div className="pie-title">Capacity Distribution</div>
+                        <div className="chart-tag">applelog</div>
+                      </div>
+                      <div className="pie-body"><PieCapacity /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============== Section 3: ControlWidget ==============
+    const Section3 = () => {
+      const tempData = [33, 33, 34, 34, 35, 35, 36, 36, 36, 37, 38, 39, 41, 40, 38, 36, 35, 35, 36, 36, 35, 34, 34, 33];
+
+      const Widget = ({ wide, diskmon, icon, name, sub, children, bg }) => (
+        <div className={`ctl-widget ${wide ? 'wide' : ''} ${diskmon ? 'diskmon' : ''}`} style={bg}>
+          <div className="ctl-head">
+            <div className={`ctl-icon ${diskmon ? 'ctl-icon-amber' : ''}`}>{icon && <Icon name={icon} size={22} color={diskmon ? '#C8956C' : '#fff'} />}</div>
+            <div className="ctl-name">{name}{sub && <small>{sub}</small>}</div>
+          </div>
+          {children}
+        </div>
+      );
+
+      return (
+        <div className="section anchor" id="sec3">
+          <div className="anchor-id" />
+          <div className="section-num">SECTION 03 / 05</div>
+          <h2 className="section-title">控制中心 <em>ControlWidget</em></h2>
+          <p className="section-desc">
+            macOS 26 控制中心里的 diskmon widget(280×140,2x grid 占比)。
+            跟 Wi-Fi / Bluetooth / AirDrop / 电池 / 音量 / 专注模式 并排。
+            卡片里:SF Symbol + 健康度数字 + 24h sparkline。
+          </p>
+
+          <div className="control-stage">
+            <div className="control-title">Control Center · macOS 26</div>
+            <div className="control-frame">
+
+              <div className="control-section">
+                <div className="control-section-label">Connectivity</div>
+                <div className="control-grid">
+                  <Widget name="Wi-Fi" sub="dejavu-studio" icon="wifi" />
+                  <Widget name="Bluetooth" sub="On" icon="bluetooth" />
+                  <Widget name="AirDrop" sub="Contacts Only" icon="airdrop" />
+                  <Widget wide name="Personal Hotspot" sub="Not Active" icon="bolt" />
+                </div>
+              </div>
+
+              <div className="control-section">
+                <div className="control-section-label">Storage & Power · diskmon</div>
+                <div className="control-grid">
+                  <Widget
+                    diskmon wide
+                    name="diskmon"
+                    sub="3 Disks · 2 Good / 1 Warning"
+                    icon="externaldrive.fill"
+                  >
+                    <div className="diskmon-ctl-body">
+                      <div className="diskmon-ctl-stats">
+                        <span className="diskmon-ctl-num">36°</span>
+                        <span className="diskmon-ctl-unit">hottest</span>
+                        <span style={{ marginLeft: 'auto', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>
+                          <b style={{ color: '#E8B895' }}>6.8W</b> total
+                        </span>
+                      </div>
+                      <div className="diskmon-ctl-spark">
+                        <Sparkline data={tempData} color="#C8956C" w={220} h={20} stroke={1.5} fillOpacity={0.25} />
+                      </div>
+                    </div>
+                  </Widget>
+                  <Widget name="Battery" sub="84%" icon="battery.100" />
+                </div>
+              </div>
+
+              <div className="control-section">
+                <div className="control-section-label">Sound & Focus</div>
+                <div className="control-grid">
+                  <Widget name="Sound" sub="MacBook Pro" icon="speaker.wave.3" />
+                  <Widget name="Focus" sub="Do Not Disturb" icon="moon.fill" />
+                  <Widget name="Stage Manager" sub="Off" icon="chart.pie" />
+                  <Widget name="Screen Lock" sub="—" icon="lock" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============== Section 4: App Icons ==============
+    const Section4 = () => {
+      // 8 candidates. Each 128x128 rendered as SVG with macOS Big Sur+ style (squircle + gradient + symbol)
+      const icons = [
+        {
+          n: '01', name: 'Drive · Thermometer',
+          bg: 'linear-gradient(135deg, #1a1820 0%, #2a2530 100%)',
+          symbol: (color) => (
+            <g>
+              <rect x="44" y="36" width="40" height="56" rx="20" fill="none" stroke={color} strokeWidth="3" />
+              <circle cx="64" cy="78" r="9" fill={color} />
+              <line x1="64" y1="78" x2="64" y2="46" stroke={color} strokeWidth="3" strokeLinecap="round" />
+            </g>
+          ),
+        },
+        {
+          n: '02', name: 'Activity Ring',
+          bg: 'linear-gradient(135deg, #C8956C 0%, #8A6240 100%)',
+          symbol: () => (
+            <g fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round">
+              <circle cx="64" cy="64" r="32" stroke="rgba(255,255,255,0.3)" />
+              <path d="M64 32 a32 32 0 0 1 28 16" />
+              <path d="M92 48 a32 32 0 0 1 0 32" stroke="rgba(255,255,255,0.3)" />
+            </g>
+          ),
+        },
+        {
+          n: '03', name: 'Gauge 50%',
+          bg: 'linear-gradient(160deg, #1e1c24 0%, #0f0d12 100%)',
+          symbol: () => (
+            <g stroke="#C8956C" strokeWidth="3" fill="none" strokeLinecap="round">
+              <path d="M32 78 a32 32 0 0 1 64 0" />
+              <line x1="64" y1="78" x2="80" y2="50" stroke="#E8B895" strokeWidth="3.5" />
+              <circle cx="64" cy="78" r="3" fill="#C8956C" />
+              <circle cx="36" cy="78" r="2" fill="#C8956C" />
+              <circle cx="92" cy="78" r="2" fill="#C8956C" />
+            </g>
+          ),
+        },
+        {
+          n: '04', name: 'Drive · Bolt',
+          bg: 'linear-gradient(135deg, #1a1820 0%, #2a2530 100%)',
+          symbol: () => (
+            <g>
+              <rect x="32" y="48" width="64" height="32" rx="6" fill="none" stroke="#C8956C" strokeWidth="3" />
+              <path d="M68 54 L58 70 H66 L62 84 L74 66 H66 Z" fill="#C8956C" />
+            </g>
+          ),
+        },
+        {
+          n: '05', name: 'Amber Halo',
+          bg: 'radial-gradient(circle at 30% 30%, #2a1f15, #0e0d11 70%)',
+          symbol: () => (
+            <g fill="none" stroke="#C8956C" strokeWidth="2.5">
+              <circle cx="64" cy="64" r="30" opacity="0.5" />
+              <circle cx="64" cy="64" r="22" opacity="0.7" />
+              <circle cx="64" cy="64" r="14" opacity="1" />
+              <circle cx="64" cy="64" r="6" fill="#C8956C" stroke="none" />
+            </g>
+          ),
+        },
+        {
+          n: '06', name: 'Stacked Platters',
+          bg: 'linear-gradient(180deg, #2a2530 0%, #1a1820 100%)',
+          symbol: () => (
+            <g>
+              <ellipse cx="64" cy="50" rx="32" ry="6" fill="none" stroke="#C8956C" strokeWidth="2.5" />
+              <ellipse cx="64" cy="64" rx="32" ry="6" fill="none" stroke="#C8956C" strokeWidth="2.5" />
+              <ellipse cx="64" cy="78" rx="32" ry="6" fill="none" stroke="#C8956C" strokeWidth="2.5" />
+              <circle cx="48" cy="64" r="2" fill="#C8956C" />
+            </g>
+          ),
+        },
+        {
+          n: '07', name: 'Wordmark 1',
+          bg: 'linear-gradient(135deg, #14131A 0%, #2a2530 100%)',
+          symbol: () => (
+            <g>
+              <text x="64" y="58" textAnchor="middle" fontFamily="Fraunces, serif" fontStyle="italic" fontSize="26" fill="#C8956C" fontWeight="500">disk</text>
+              <text x="64" y="84" textAnchor="middle" fontFamily="Fraunces, serif" fontSize="26" fill="#F5F2EC" fontWeight="400">mon</text>
+              <circle cx="92" cy="40" r="2" fill="#C8956C" />
+            </g>
+          ),
+        },
+        {
+          n: '08', name: 'Mono Mark',
+          bg: 'linear-gradient(160deg, #C8956C 0%, #8A6240 100%)',
+          symbol: () => (
+            <g>
+              <text x="64" y="74" textAnchor="middle" fontFamily="Fraunces, serif" fontStyle="italic" fontSize="36" fill="#14131A" fontWeight="500">d.</text>
+            </g>
+          ),
+        },
+      ];
+
+      return (
+        <div className="section anchor" id="sec4">
+          <div className="anchor-id" />
+          <div className="section-num">SECTION 04 / 05</div>
+          <h2 className="section-title">App Icon <em>概念候选</em></h2>
+          <p className="section-desc">
+            8 个候选 — 全部 macOS Big Sur+ 圆角(squircle ≈ 22.4%)。
+            主色 琥珀 + 玻璃黑。SF Symbol 思路为主,Wordmark 思路作对比。
+            最终选 1 个落地(建议:01 简洁,或 02 暖色反差;7/8 文字类备选)。
+          </p>
+
+          <div className="icon-stage">
+            <div className="icon-grid">
+              {icons.map((ic, i) => (
+                <div className="icon-cell" key={i}>
+                  <div className="icon-tile">
+                    <svg viewBox="0 0 128 128" preserveAspectRatio="xMidYMid slice">
+                      <defs>
+                        <clipPath id={`sq-${i}`}>
+                          <rect x="0" y="0" width="128" height="128" rx="28.7" />
+                        </clipPath>
+                      </defs>
+                      <g clipPath={`url(#sq-${i})`}>
+                        <rect x="0" y="0" width="128" height="128" fill={ic.bg} />
+                        {ic.symbol('#C8956C')}
+                        {/* diskmon wordmark in corner */}
+                        <text x="14" y="118" fontFamily="JetBrains Mono, monospace" fontSize="6.5" fill="rgba(245,242,236,0.4)" letterSpacing="1.5">DISKMON</text>
+                      </g>
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="icon-num">CONCEPT {ic.n}</div>
+                    <div className="icon-name">{ic.name}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============== Section 5: Popover Main ==============
+    const Section5 = () => {
+      const power24h = [0.8, 0.8, 0.8, 0.9, 1.2, 1.5, 2.1, 2.8, 3.4, 4.2, 4.0, 3.5, 4.2, 3.8, 2.5, 1.8, 1.2, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8];
+      return (
+        <div className="section anchor" id="sec5">
+          <div className="anchor-id" />
+          <div className="section-num">SECTION 05 / 05</div>
+          <h2 className="section-title">Popover <em>主屏扩</em>(实时功耗)</h2>
+          <p className="section-desc">
+            现有 380×520 popover 在 v0.2.0 扩展:hero 加 1 个<em>实时功耗小卡</em>(显示所有盘总功耗 + 状态),
+            中部加 1 行 24h 功耗 sparkline,设置入口保留(Preferences…)。
+          </p>
+
+          <div className="popover-stage">
+            <div className="popover-arrow">
+              <em>新增元素</em><br/><br/>
+              <b>① 实时功耗小卡</b><br/>
+              Hero 下方,琥珀玻璃质感。显示当前 3 盘总功耗 6.8W,以及 24h 趋势 sparkline(峰值 11.5W at 14:00)。<br/><br/>
+              <b>② 24h 功耗 sparkline</b><br/>
+              跟温度读数共享视觉语言,琥珀色;为单盘 / 汇总可切换。<br/><br/>
+              <b>③ 状态保持</b><br/>
+              顶部标题 + 版本号,底部 Preferences… + Quit 入口不变。
+            </div>
+
+            <div className="popover">
+              <div className="pop-header">
+                <div className="pop-title">diskmon</div>
+                <div className="pop-version">v0.2.0 · 3 DISKS</div>
+              </div>
+
+              <div className="pop-body">
+                <div className="pop-hero">
+                  <div className="pop-temp">36<sup>°C</sup></div>
+                  <div className="pop-temp-meta">
+                    <div className="label">Hottest</div>
+                    <div className="val">wd_sn550</div>
+                    <div className="val amber">+5° vs avg</div>
+                  </div>
+                </div>
+
+                {/* NEW: Power card */}
+                <div className="pop-power">
+                  <div className="pop-power-icon"><Icon name="bolt" size={20} color="#C8956C" /></div>
+                  <div className="pop-power-text">
+                    <div className="pop-power-label">Total Power Draw</div>
+                    <div className="pop-power-val">6.8<small>W</small> <span style={{ fontSize: 10, color: 'var(--text-dim)', marginLeft: 6 }}>peak 11.5W</span></div>
+                  </div>
+                  <div className="pop-power-delta warn">+0.4W</div>
+                </div>
+
+                <div className="pop-disks">
+                  <div className="pop-disk">
+                    <span className="pop-disk-icon"><Icon name="externaldrive.fill" size={18} color="#9A928A" /></span>
+                    <div className="pop-disk-name">applelog<small>WD SN570 · 1 TB · TB4</small></div>
+                    <div className="pop-disk-temp">36°C</div>
+                    <div className="pop-disk-power"><b>4.2W</b> read</div>
+                  </div>
+                  <div className="pop-disk">
+                    <span className="pop-disk-icon"><Icon name="externaldrive.fill" size={18} color="#9A928A" /></span>
+                    <div className="pop-disk-name">Macintosh HD<small>Apple AP0512Z · 500 GB</small></div>
+                    <div className="pop-disk-temp">32°C</div>
+                    <div className="pop-disk-power"><b>2.1W</b> idle</div>
+                  </div>
+                  <div className="pop-disk">
+                    <span className="pop-disk-icon warn"><Icon name="externaldrive.fill" size={18} color="#D9A55C" /></span>
+                    <div className="pop-disk-name">wd_sn550<small>WD SN550 · 1 TB · idle</small></div>
+                    <div className="pop-disk-temp warn">41°C</div>
+                    <div className="pop-disk-power"><b>0.8W</b> idle</div>
+                  </div>
+                </div>
+
+                {/* NEW: 24h power sparkline */}
+                <div className="pop-spark-section">
+                  <div className="pop-spark-head">
+                    <div className="pop-spark-label">24h Power</div>
+                    <div className="pop-spark-val">total <b>6.8W</b> · peak <b>11.5W</b></div>
+                  </div>
+                  <div className="pop-spark-svg">
+                    <Sparkline data={power24h} color="#C8956C" w={340} h={36} stroke={1.6} fillOpacity={0.2} />
+                  </div>
+                </div>
+
+                <div className="pop-footer">
+                  <button className="pop-btn">Preferences<span className="dots">…</span></button>
+                  <button className="pop-btn">Open Deep View →</button>
+                  <button className="pop-btn">Quit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============== Cover ==============
+    const Cover = () => (
+      <div className="cover">
+        <div className="cover-tag">diskmon · v0.2.0 Design Direction</div>
+        <h1>Status, Detail, Control — <em>three surfaces, one language.</em></h1>
+        <p className="cover-sub">
+          macOS 菜单栏小工具的 v0.2.0 视觉扩展 — 4 种 status item 模式、磁盘详情深看页、macOS 26 控制中心 widget、8 个 App Icon 候选,以及 Popover 主屏的实时功耗扩展。
+        </p>
+        <div className="cover-meta">
+          <span>Owner <b>déjà vu_tao（mian）</b></span>
+          <span>Stack <b>SwiftUI MenuBarExtra + SwiftData + smartctl</b></span>
+          <span>Aesthetic <b>moody amber · liquid glass</b></span>
+          <span>Date <b>2026-09-01</b></span>
+        </div>
+      </div>
+    );
+
+    // ============== App ==============
+    const App = () => (
+      <div className="container">
+        <Cover />
+        <Section1 />
+        <Section2 />
+        <Section3 />
+        <Section4 />
+        <Section5 />
+        <div className="footer">
+          <em>花叔Design · diskmon v0.2.0</em> · 1 file · 5 sections · &nbsp;finished.
+        </div>
+      </div>
+    );
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

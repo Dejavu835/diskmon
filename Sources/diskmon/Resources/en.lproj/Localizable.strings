@@ -1,0 +1,240 @@
+/* DiskMon English (en) localization */
+/* All user-visible strings — kept minimal & restrained, per owner aesthetic */
+/* v0.4.0 polish-F:Chinese is the default; English is a deliberate opt-out */
+
+/* MARK: - General / UI shell */
+"app.name" = "DiskMon";
+"ui.preferences" = "Preferences…";
+"ui.quit" = "Quit";
+"ui.close" = "Close";
+"ui.cancel" = "Cancel";
+"ui.open" = "Open";
+"ui.copy" = "Copy";
+"ui.later" = "Later";
+"ui.refresh" = "Refresh";
+"ui.settings" = "Settings";
+
+/* MARK: - Bilingual section / card labels (v0.4.3 polish-I P2-1) */
+/* 8 个中英混排标签:大写英文 · 中文(中文降一档,克制不抢戏) */
+"card.temperature.label" = "TEMPERATURE · 温度";
+"card.capacity.label" = "CAPACITY · 容量";
+"card.power.label" = "POWER · 功耗";
+"card.smart.label" = "SMART · 详情";
+"card.overview.label" = "OVERVIEW · 总览";
+"card.health.label" = "HEALTH · 健康";
+"card.history.label" = "HISTORY · 历史";
+"section.drives" = "DRIVES · 磁盘";
+"section.charts" = "CHARTS · 图表";
+
+/* MARK: - Preferences tabs */
+"tab.general" = "General";
+"tab.disks" = "Disks";
+"tab.notifications" = "Notifications";
+"tab.appearance" = "Appearance";
+"tab.about" = "About";
+
+/* MARK: - Detail view tabs (polish-D reserved) */
+"tab.overview" = "Overview";
+"tab.temperature" = "Temperature";
+"tab.capacity" = "Capacity";
+"tab.power" = "Power";
+"tab.smart" = "SMART";
+"tab.detail" = "Detail";
+"tab.history" = "History";
+
+/* MARK: - General settings */
+"settings.polling" = "Polling";
+"settings.interval" = "Monitor interval";
+"settings.interval.value" = "%d sec";
+"settings.thresholds" = "Thresholds";
+"settings.warning" = "Warning temperature";
+"settings.critical" = "Critical temperature";
+"settings.unit" = "Temperature unit";
+"settings.unit.celsius" = "Celsius (℃)";
+"settings.unit.fahrenheit" = "Fahrenheit (℉)";
+
+/* MARK: - Disks settings */
+"settings.disks.watched" = "Watched Disks";
+"settings.disks.empty" = "No disks yet. Connect an external drive to begin monitoring.";
+"settings.disks.discover" = "Discovering disks…";
+
+/* MARK: - Notifications settings */
+"settings.notifications.title" = "Notifications";
+"settings.notifications.body" = "Notify you when a disk crosses a temperature threshold.";
+"settings.notifications.authorize" = "Authorize notifications";
+"settings.notifications.authorized" = "Notifications authorized";
+"settings.notifications.denied" = "Notifications denied — System Settings → Notifications → DiskMon";
+"settings.notifications.launch" = "Launch at login";
+"settings.notifications.launch.help" = "Start DiskMon automatically when you sign in.";
+
+/* MARK: - Appearance settings */
+"settings.appearance.title" = "Appearance";
+"settings.appearance.language" = "Language";
+"settings.appearance.language.en" = "English";
+"settings.appearance.language.zh" = "简体中文";
+"settings.appearance.menubar" = "Menu bar pulse";
+"settings.appearance.menubar.help" = "Show a subtle pulse in the menu bar during critical conditions.";
+
+/* MARK: - About */
+"about.version" = "Version %@";
+"about.copyright" = "© 2026 déjà vu_tao（mian）, Cursor Agent, MiniMax Agent, gorkbuild";
+
+/* MARK: - Menu bar */
+"menubar.notready" = "—°";
+
+/* MARK: - Cards (Popover) */
+"card.temperature" = "Temperature";
+"card.smart" = "SMART";
+"card.history" = "History";
+"card.lifetime" = "Lifetime";
+"card.health" = "Health";
+
+/* MARK: - Health level labels */
+"health.normal" = "Healthy";
+"health.warning" = "Caution";
+"health.critical" = "Critical";
+"health.danger" = "Danger";
+
+/* MARK: - Temperature card subtitle */
+"subtitle.starting" = "Starting up…";
+"subtitle.fda" = "Full Disk Access required — System Settings → Privacy & Security";
+"subtitle.smartctl" = "smartctl not installed — brew install smartmontools";
+"subtitle.normal" = "Healthy · Temperature %@° · Lifetime %@%%";
+"subtitle.warning" = "Caution · Temperature or lifetime near threshold";
+"subtitle.critical" = "Critical · Back up your data now";
+"subtitle.danger" = "Danger · Back up and inspect the disk now";
+
+/* MARK: - SMART card field names */
+"smart.temperature" = "Temperature";
+"smart.percentageUsed" = "Percentage Used";
+"smart.availableSpare" = "Available Spare";
+"smart.dataRead" = "Data Units Read";
+"smart.dataWritten" = "Data Units Written";
+"smart.powerOnHours" = "Power On Hours";
+"smart.powerCycles" = "Power Cycles";
+"smart.unsafeShutdowns" = "Unsafe Shutdowns";
+"smart.mediaErrors" = "Media Errors";
+"smart.warningTempTime" = "Warning Temp Time";
+"smart.criticalTempTime" = "Critical Temp Time";
+
+/* MARK: - History chart */
+"chart.empty" = "Waiting for data…";
+"chart.window.1h" = "1H";
+"chart.window.24h" = "24H";
+"chart.window.7d" = "7D";
+
+/* MARK: - Disk picker */
+"disk.watched" = "WATCHED DISKS";
+"disk.empty" = "No external disks — connect one to begin";
+"disk.noDisk" = "No disk";
+
+/* MARK: - Popover bottom bar */
+"popover.preferences" = "Preferences…";
+"popover.quit" = "Quit";
+
+/* MARK: - Notification copy */
+"notification.title.bit0" = "DiskMon — CRITICAL WARNING bit 0";
+"notification.title.bit4" = "DiskMon — CRITICAL WARNING bit 4";
+"notification.title.normal" = "DiskMon — NORMAL";
+"notification.title.warning" = "DiskMon — CAUTION";
+"notification.title.critical" = "DiskMon — CRITICAL";
+"notification.title.danger" = "DiskMon — DANGER";
+"notification.body.bit0" = "%@ · Temperature threshold exceeded · Back up now";
+"notification.body.bit4" = "%@ · Backup or redundancy failure · Inspect now";
+"notification.body.normal" = "%@ · %@° · Healthy";
+"notification.body.warning" = "%@ · %@° · Approaching threshold";
+"notification.body.critical.temp" = "%@ · %@° · Temperature critical";
+"notification.body.critical.lifetime" = "%@ · Lifetime %@%% · Nearly exhausted";
+"notification.body.danger.media" = "%@ · Media errors %@ · Back up now";
+"notification.body.danger.temp" = "%@ · %@° · Danger";
+
+/* MARK: - Full Disk Access alert */
+"alert.fda.title" = "DiskMon needs Full Disk Access";
+"alert.fda.message" = "smartctl reads raw /dev/diskN devices and requires Full Disk Access (TCC).\n\nSystem Settings → Privacy & Security → Full Disk Access\n\nEnable DiskMon, then relaunch the app.";
+"alert.fda.openSettings" = "Open System Settings";
+"alert.fda.copyCommand" = "Copy Command";
+"alert.fda.later" = "Later";
+
+/* MARK: - Errors */
+"error.smartctl.missing" = "smartctl not installed. Run: brew install smartmontools";
+"error.smartctl.short" = "smartctl not installed";
+"error.fullDiskAccess.short" = "Full Disk Access required";
+"error.fda.long" = "DiskMon requires Full Disk Access to read SMART data via smartctl.";
+"error.parse" = "Unable to parse smartctl output";
+"error.commandFailed" = "smartctl exited with code %d";
+
+/* MARK: - SmartctlService error descriptions */
+"errortag.smartctl.missing" = "smartctl not found. Install via: brew install smartmontools";
+"errortag.fda" = "DiskMon requires Full Disk Access to read SMART data.";
+
+/* MARK: - Units (v0.4.3 polish-I P2-5) */
+"unit.days" = "days";
+"unit.hours" = "hours";
+"unit.minutes" = "min";
+"unit.seconds" = "sec";
+"unit.watts" = "W";
+"unit.tb" = "TB";
+"unit.gb" = "GB";
+"unit.mb" = "MB";
+
+/* MARK: - Status (v0.4.3 polish-I P2-5) */
+"status.good" = "Good";
+"status.warning" = "Warning";
+"status.critical" = "Critical";
+"status.danger" = "Danger";
+"status.notavailable" = "N/A";
+
+"topbar.tab.overview" = "Overview";
+"topbar.tab.temperature" = "Temp";
+"topbar.tab.capacity" = "Capacity";
+"topbar.tab.power" = "Power";
+"topbar.tab.smart" = "SMART";
+"topbar.tab.more" = "More";
+"module.overview.title" = "Overview";
+"module.temperature.selected" = "Selected";
+"module.power.title" = "Power";
+"module.power.notAvailable" = "Not available";
+"module.power.rated" = "Rated max, not live watts";
+"module.power.waiting" = "Rated power in ~5s (first poll)";
+"module.power.usbNever" = "USB bridge does not expose power";
+"module.power.systemEst" = "System estimate, not this disk";
+"module.temperature.noSensor" = "No temperature sensor";
+"module.temperature.usbNever" = "USB bridge does not expose temperature";
+"module.temperature.waiting" = "Appears in ~5s (first poll)";
+"module.temperature.noData" = "No data";
+"card.smart.attributes" = "SMART attributes";
+"card.power" = "Power";
+"card.link" = "Link";
+"card.selfTest" = "Self-Test";
+"card.benchmark" = "Benchmark";
+"card.integrity" = "FS Integrity";
+"popover.warnings" = "Open Warnings…";
+"popover.export" = "Export Report…";
+"popover.detail" = "Open Disk Detail…";
+"more.title" = "More Tools";
+"more.back" = "Back";
+"more.back.help" = "Back to tools";
+"more.entry.link.title" = "Link Health";
+"more.entry.link.desc" = "TB / PCIe / USB link";
+"more.entry.test.title" = "Self-Test";
+"more.entry.test.desc" = "SMART short / long";
+"more.entry.bench.title" = "Benchmark";
+"more.entry.bench.desc" = "Sequential MB/s";
+"more.entry.fs.title" = "FS Integrity";
+"more.entry.fs.desc" = "Read-only verify";
+"more.route.link" = "Link Health";
+"more.route.test" = "Self-Test";
+"more.route.bench" = "Benchmark";
+"more.route.fs" = "FS Integrity";
+"module.test.runShort" = "Short";
+"module.test.runLong" = "Long";
+"tab.link.listTitle" = "ALL DISKS · LINK";
+"tab.test.listTitle" = "ALL DISKS · SELF-TEST";
+"tab.bench.listTitle" = "ALL DISKS · BENCH";
+"tab.fs.listTitle" = "ALL DISKS · FS";
+"tab.smart.fieldsTitle" = "SMART FIELDS · REFERENCE";
+"tab.smart.noData" = "No SMART data";
+"tab.smart.usbBridge" = "USB bridge does not pass SMART — identity still captured";
+"capture.usbBridge" = "USB bridge does not pass SMART. Waiting will not help.";
+"capture.pending" = "Sensor data usually appears within ~5s of first poll.";
+
