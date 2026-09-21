@@ -139,7 +139,7 @@
 "notification.title.warning" = "DiskMon — CAUTION";
 "notification.title.critical" = "DiskMon — CRITICAL";
 "notification.title.danger" = "DiskMon — DANGER";
-"notification.body.bit0" = "%@ · Temperature threshold exceeded · Back up now";
+"notification.body.bit0" = "%@ · Available spare below threshold · Back up now";
 "notification.body.bit4" = "%@ · Backup or redundancy failure · Inspect now";
 "notification.body.normal" = "%@ · %@° · Healthy";
 "notification.body.warning" = "%@ · %@° · Approaching threshold";

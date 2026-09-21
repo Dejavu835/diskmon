@@ -4,7 +4,7 @@ import AppKit
 
 /// UNUserNotificationCenter 封装 + Full Disk Access 引导
 /// 等级变化才发,不重复
-/// Critical Warning bit 0 (温度警告) / bit 4 (备份失败) 立即红色通知(无视阈值)
+/// Critical Warning bit 0 (available spare below threshold) / bit 4 (backup failed)
 /// v0.2.0:所有文案走 String(localized:),本地化用 Localizable.strings 现有 key 集
 final class NotificationService {
     static let shared = NotificationService()
@@ -39,7 +39,7 @@ final class NotificationService {
             let body = String(
                 format: String(
                     localized: "notification.body.bit0",
-                    defaultValue: "%@ · Temperature threshold exceeded · Back up now"
+                    defaultValue: "%@ · Available spare below threshold · Back up now"
                 ),
                 disk.mountPoint ?? disk.bsdName
             )

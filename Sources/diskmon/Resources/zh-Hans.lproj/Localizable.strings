@@ -145,7 +145,7 @@
 "notification.title.warning" = "DiskMon — 注意";
 "notification.title.critical" = "DiskMon — 临界";
 "notification.title.danger" = "DiskMon — 危险";
-"notification.body.bit0" = "%@ · 温度超阈值 · 立即备份";
+"notification.body.bit0" = "%@ · 备用空间低于阈值 · 立即备份";
 "notification.body.bit4" = "%@ · 备份或冗余失败 · 立即检查";
 "notification.body.normal" = "%@ · %@° · 健康";
 "notification.body.warning" = "%@ · %@° · 接近阈值";

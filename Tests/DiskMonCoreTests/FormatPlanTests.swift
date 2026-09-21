@@ -258,6 +258,7 @@ final class FormatPlanTests: XCTestCase {
         XCTAssertNil(NTFSKitProbe.ntfsKitPersonality(in: names))
     }
 
+    #if os(macOS)
     func testLiveListFilesystemsProbeDoesNotCrash() throws {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/usr/sbin/diskutil")
@@ -277,6 +278,7 @@ final class FormatPlanTests: XCTestCase {
         print("NTFSKIT_AVAILABLE=\(available)")
         print("PERSONALITIES=\(names.joined(separator: ","))")
     }
+    #endif
 
     func testProbePlistPersonality() {
         let xml = """

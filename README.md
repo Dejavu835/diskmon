@@ -4,7 +4,7 @@ macOS menu-bar app for external-disk temperature, SMART, and health.
 
 菜单栏小工具：盯外接盘的温度、SMART 和健康度。只做 Mac，不写假传感器数据。
 
-**Current: 4.0.1** (branch `v4.0.1-accuracy`) · macOS 14+ · Apple Silicon
+**Current: 4.0.1** (default branch `main`) · macOS 14+ · Apple Silicon
 
 ## What it does
 

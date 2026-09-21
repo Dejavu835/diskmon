@@ -1,18 +1,28 @@
 import Foundation
 
-/// 双路径探测:Apple Silicon /opt/homebrew + Intel /usr/local
+/// Locate smartctl. GUI apps often have a short PATH, so Homebrew/MacPorts
+/// come first; PATH is the fallback for nix / custom prefixes.
 enum SmartctlPathLocator {
-    /// 优先 PATH 解析,再 fallback 两条常见路径
     static func resolve() -> String? {
-        // 1) /opt/homebrew/bin/smartctl(Apple Silicon 默认)
-        let armPath = "/opt/homebrew/bin/smartctl"
-        if FileManager.default.isExecutableFile(atPath: armPath) {
-            return armPath
+        let known = [
+            "/opt/homebrew/bin/smartctl",
+            "/usr/local/bin/smartctl",
+            "/opt/local/bin/smartctl"
+        ]
+        for path in known where FileManager.default.isExecutableFile(atPath: path) {
+            return path
         }
-        // 2) /usr/local/bin/smartctl(Intel 默认)
-        let x86Path = "/usr/local/bin/smartctl"
-        if FileManager.default.isExecutableFile(atPath: x86Path) {
-            return x86Path
+        return lookupInPATH()
+    }
+
+    private static func lookupInPATH() -> String? {
+        let path = ProcessInfo.processInfo.environment["PATH"] ?? ""
+        for dir in path.split(separator: ":") {
+            let candidate = URL(fileURLWithPath: String(dir), isDirectory: true)
+                .appendingPathComponent("smartctl").path
+            if FileManager.default.isExecutableFile(atPath: candidate) {
+                return candidate
+            }
         }
         return nil
     }

@@ -67,7 +67,7 @@ struct AboutSettingsView: View {
 
     private var linksCard: some View {
         HStack(spacing: 12) {
-            linkRow(systemImage: "link", label: "GitHub", url: "https://github.com/dejavuteam/diskmon")
+            linkRow(systemImage: "link", label: "GitHub", url: "https://github.com/Dejavu835/diskmon")
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
@@ -75,7 +75,7 @@ struct AboutSettingsView: View {
     }
 
     private func linkRow(systemImage: String, label: String, url: String) -> some View {
-        Link(destination: URL(string: url) ?? URL(string: "https://github.com/dejavuteam/diskmon")!) {
+        Link(destination: URL(string: url) ?? URL(string: "https://github.com/Dejavu835/diskmon")!) {
             HStack(spacing: 8) {
                 Image(systemName: systemImage)
                     .font(.system(size: 13))
@@ -120,8 +120,8 @@ struct AboutSettingsView: View {
     }
 
     private var versionLine: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.0"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0.2.0"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "4.0.1"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "4.0.1"
         return "v\(version) (\(build))"
     }
 
