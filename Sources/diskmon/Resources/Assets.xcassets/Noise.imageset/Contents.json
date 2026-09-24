@@ -1,0 +1,30 @@
+{
+  "images" : [
+    {
+      "filename" : "35mm@3x.png",
+      "idiom" : "mac",
+      "scale" : "3x",
+      "size" : "256x256"
+    },
+    {
+      "filename" : "35mm@2x.png",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "256x256"
+    },
+    {
+      "filename" : "35mm.png",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "256x256"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : false,
+    "template-rendering-intent" : "original"
+  }
+}

@@ -1,0 +1,46 @@
+# Xcode / macOS standard
+.DS_Store
+._*
+*.xcuserstate
+xcuserdata/
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+build/
+*.app
+build/Release/
+build/Debug/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build artifacts (v0.2.0: dist/ 含 .app 和 .dmg,不入版本控制)
+# 备注:初始 commit 58ca86d 里 dist/diskmon-0.1.0.dmg 已被 track,
+# 如需从历史移除需 git rm --cached(本 wave 不做,留给主人在合适时清)
+dist/
+
+# Swift package manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Tauri (if back-up)
+src-tauri/target/
+src-tauri/gen/
+
+# Python (if back-up)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Logs
+*.log
+logs/
+
+# Local-only trees (not needed to build the monitor)
+vendor/
+diskmon-designs/
