@@ -1,10 +1,8 @@
 # diskmon
 
-macOS menu-bar app for external-disk temperature, SMART, and health.
+菜单栏里看外接盘的温度和 SMART。读不到就写「—」，不拿 0°C 充数。
 
-菜单栏小工具：盯外接盘的温度、SMART 和健康度。只做 Mac，不写假传感器数据。
-
-**Current: 4.0.1** (branch `v4.0.1-accuracy`) · macOS 14+ · Apple Silicon
+4.0.1。macOS 14 及以上，Apple Silicon。
 
 ## What it does
 
